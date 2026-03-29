@@ -1,0 +1,27 @@
+# Xcode
+xcuserdata/
+*.playground/timeline.xctimeline
+*.playground/playground.xcworkspace
+
+# Build
+.build/
+DerivedData/
+build/
+
+# SPM
+.swiftpm/
+Package.resolved
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# AppCode
+.idea/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
