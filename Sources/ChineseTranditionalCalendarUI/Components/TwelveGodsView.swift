@@ -81,3 +81,14 @@ public struct TwelveGodsView: View {
         return theme.secondaryTextColor
     }
 }
+
+#Preview {
+    TwelveGodsView(calendarDate: CalendarDate(date: .now))
+        .padding()
+}
+
+#Preview("Traditional theme") {
+    TwelveGodsView(calendarDate: CalendarDate(date: .now))
+        .padding()
+        .calendarTheme(.traditional)
+}

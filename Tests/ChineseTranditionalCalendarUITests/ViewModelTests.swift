@@ -106,6 +106,32 @@ struct MonthlyCalendarViewModelTests {
         #expect(vm.currentMonth.month == 8)
     }
 
+    @Test("navigate(to:) clears selectedDate")
+    func navigateClearsSelection() {
+        let vm = MonthlyCalendarViewModel()
+        vm.select(CalendarDate(date: .now))
+        #expect(vm.selectedDate != nil)
+
+        let other = Calendar.current.date(
+            from: DateComponents(year: 2025, month: 6, day: 1)
+        )!
+        vm.navigate(to: other)
+        #expect(vm.selectedDate == nil)
+    }
+
+    @Test("firstWeekday from config is applied to calendar grid")
+    func firstWeekdayPropagated() {
+        // March 2026: 1st is Sunday.
+        // Monday-start config → leadingSpaces should be 6.
+        let date = Calendar.current.date(
+            from: DateComponents(year: 2026, month: 3, day: 1)
+        )!
+        let mondayConfig = CalendarConfiguration(firstWeekday: 2)
+        let vm = MonthlyCalendarViewModel(date: date, configuration: mondayConfig)
+        #expect(vm.currentMonth.calendar.firstWeekday == 2)
+        #expect(vm.currentMonth.leadingSpaces == 6)
+    }
+
     @Test("Configuration is passed through correctly")
     func configuration() {
         let config = CalendarConfiguration.minimal

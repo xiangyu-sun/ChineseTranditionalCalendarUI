@@ -40,3 +40,8 @@ public struct LunarMansionView: View {
         .accessibilityLabel("\(mansion.name), \(mansion.fourSymbol.rawValue), \(mansion.fangwei.chineseCharacter)方")
     }
 }
+
+#Preview {
+    LunarMansionView(calendarDate: CalendarDate(date: .now))
+        .padding()
+}

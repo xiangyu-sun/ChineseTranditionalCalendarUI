@@ -43,10 +43,10 @@ public struct CalendarMonth: Identifiable, Hashable, Sendable {
     }
 
     /// Number of leading blank cells before the 1st (to align the grid).
+    /// Respects `calendar.firstWeekday` so Monday-start calendars shift correctly.
     public var leadingSpaces: Int {
-        // Adjust so Monday = 0 if we want Monday-start, or Sunday = 0 for Sunday-start.
-        // Default: Sunday-start grid, so leadingSpaces = firstWeekday - 1
-        firstWeekday - 1
+        let calWeekday = calendar.component(.weekday, from: firstDayOfMonth)
+        return (calWeekday - calendar.firstWeekday + 7) % 7
     }
 
     /// All `CalendarDate` values in this month (1 … numberOfDays).
@@ -61,15 +61,13 @@ public struct CalendarMonth: Identifiable, Hashable, Sendable {
         }
     }
 
-    /// The full grid including leading placeholders from the previous month
-    /// and trailing placeholders to fill the last row (always 42 cells = 6 rows x 7 cols).
+    /// The full grid padded to exactly 42 cells (6 rows × 7 cols).
     public var gridDates: [CalendarDate?] {
         var grid: [CalendarDate?] = Array(repeating: nil, count: leadingSpaces)
         grid.append(contentsOf: days)
-        // Pad trailing to reach a multiple of 7
-        let remainder = grid.count % 7
-        if remainder != 0 {
-            grid.append(contentsOf: Array(repeating: CalendarDate?.none, count: 7 - remainder))
+        let needed = 42 - grid.count
+        if needed > 0 {
+            grid.append(contentsOf: Array(repeating: CalendarDate?.none, count: needed))
         }
         return grid
     }
@@ -81,10 +79,14 @@ public struct CalendarMonth: Identifiable, Hashable, Sendable {
 
     /// Formatted title, e.g. "March 2026" or localized equivalent.
     public var title: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        return formatter.string(from: firstDayOfMonth)
+        CalendarMonth.titleFormatter.string(from: firstDayOfMonth)
     }
+
+    private static let titleFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "MMMM yyyy"
+        return f
+    }()
 
     // MARK: - Navigation
 

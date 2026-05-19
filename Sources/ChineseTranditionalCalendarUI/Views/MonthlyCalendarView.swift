@@ -81,3 +81,19 @@ public struct MonthlyCalendarView: View {
             }
     }
 }
+
+#Preview("Default") {
+    @Previewable @State var vm = MonthlyCalendarViewModel()
+    MonthlyCalendarView(viewModel: vm)
+}
+
+#Preview("Minimal config") {
+    @Previewable @State var vm = MonthlyCalendarViewModel(configuration: .minimal)
+    MonthlyCalendarView(viewModel: vm)
+}
+
+#Preview("Traditional theme") {
+    @Previewable @State var vm = MonthlyCalendarViewModel()
+    MonthlyCalendarView(viewModel: vm)
+        .calendarTheme(.traditional)
+}

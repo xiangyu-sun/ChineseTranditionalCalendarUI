@@ -93,10 +93,14 @@ public struct DayDetailView: View {
     }
 
     private var gregorianDateString: String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        return formatter.string(from: calendarDate.date)
+        DayDetailView.dateFormatter.string(from: calendarDate.date)
     }
+
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .long
+        return f
+    }()
 
     // MARK: - Shichen Section
 
@@ -134,4 +138,20 @@ public struct DayDetailView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("时辰: \(shichen.dizhi.chineseCharacter)时, \(shichen.dizhi.aliasName)")
     }
+}
+
+#Preview("Default config") {
+    DayDetailView(calendarDate: CalendarDate(date: .now))
+}
+
+#Preview("Minimal config") {
+    DayDetailView(
+        calendarDate: CalendarDate(date: .now),
+        configuration: .minimal
+    )
+}
+
+#Preview("Traditional theme") {
+    DayDetailView(calendarDate: CalendarDate(date: .now))
+        .calendarTheme(.traditional)
 }

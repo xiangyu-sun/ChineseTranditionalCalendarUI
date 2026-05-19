@@ -23,8 +23,8 @@ public final class MonthlyCalendarViewModel {
         date: Date = .now,
         configuration: CalendarConfiguration = .default
     ) {
-        self.currentMonth = CalendarMonth(containing: date)
         self.configuration = configuration
+        self.currentMonth = CalendarMonth(containing: date, calendar: Self.makeCalendar(from: configuration))
     }
 
     // MARK: - Navigation
@@ -42,13 +42,22 @@ public final class MonthlyCalendarViewModel {
     /// Navigate to today's month and select today.
     public func goToToday() {
         let today = Date.now
-        currentMonth = CalendarMonth(containing: today)
+        currentMonth = CalendarMonth(containing: today, calendar: Self.makeCalendar(from: configuration))
         selectedDate = CalendarDate(date: today)
     }
 
-    /// Navigate to a specific month containing the given date.
+    /// Navigate to a specific month containing the given date. Clears the current selection.
     public func navigate(to date: Date) {
-        currentMonth = CalendarMonth(containing: date)
+        currentMonth = CalendarMonth(containing: date, calendar: Self.makeCalendar(from: configuration))
+        selectedDate = nil
+    }
+
+    // MARK: - Private
+
+    private static func makeCalendar(from config: CalendarConfiguration) -> Calendar {
+        var cal = config.calendar
+        cal.firstWeekday = config.firstWeekday
+        return cal
     }
 
     /// Select a specific date.

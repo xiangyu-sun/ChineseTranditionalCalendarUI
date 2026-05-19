@@ -1,15 +1,26 @@
 import SwiftUI
 
 /// Row of weekday abbreviation headers (Sun, Mon, … Sat).
+/// Rotates to respect `calendar.firstWeekday`.
 public struct WeekdayHeaderView: View {
 
     @Environment(\.calendarTheme) private var theme
 
-    /// Weekday symbols, starting from Sunday by default.
     private let symbols: [String]
+    private let weekendIndices: Set<Int>
 
     public init(calendar: Calendar = .current) {
-        self.symbols = calendar.veryShortWeekdaySymbols
+        let all = calendar.veryShortWeekdaySymbols
+        let offset = calendar.firstWeekday - 1
+        if offset == 0 {
+            symbols = all
+        } else {
+            symbols = Array(all[offset...] + all[..<offset])
+        }
+        // After rotation: Sunday was at original index 0, Saturday at 6.
+        let sunIndex = (7 - offset) % 7
+        let satIndex = (6 + 7 - offset) % 7
+        weekendIndices = [sunIndex, satIndex]
     }
 
     public var body: some View {
@@ -21,7 +32,7 @@ public struct WeekdayHeaderView: View {
                 Text(symbol)
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundStyle(weekdayColor(for: index))
+                    .foregroundStyle(weekendIndices.contains(index) ? theme.weekendColor : theme.secondaryTextColor)
                     .frame(maxWidth: .infinity)
             }
         }
@@ -29,9 +40,14 @@ public struct WeekdayHeaderView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Weekday headers")
     }
+}
 
-    private func weekdayColor(for index: Int) -> Color {
-        // Sunday (0) and Saturday (6) are weekends
-        (index == 0 || index == 6) ? theme.weekendColor : theme.secondaryTextColor
-    }
+#Preview("Sunday start") {
+    WeekdayHeaderView()
+}
+
+#Preview("Monday start") {
+    var cal = Calendar.current
+    cal.firstWeekday = 2
+    return WeekdayHeaderView(calendar: cal)
 }

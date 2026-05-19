@@ -45,15 +45,20 @@ public struct MoonPhaseView: View {
 
     private func moonEmoji(for phase: ChineseMoonPhase) -> String {
         switch phase {
-        case .朔: return "🌑"
-        case .蛾眉月: return "🌒"
-        case .上弦月: return "🌓"
-        case .漸盈凸月: return "🌔"
-        case .望: return "🌕"
-        case .漸虧凸月: return "🌖"
-        case .下弦月: return "🌗"
-        case .殘月: return "🌘"
-        case .晦: return "🌑"
+        case .newMoon: return "🌑"
+        case .waxingCrescent: return "🌒"
+        case .firstQuarter: return "🌓"
+        case .waxingGibbous: return "🌔"
+        case .fullMoon: return "🌕"
+        case .waningGibbous: return "🌖"
+        case .lastQuarter: return "🌗"
+        case .waningCrescent: return "🌘"
+        case .darkMoon: return "🌑"
         }
     }
+}
+
+#Preview {
+    MoonPhaseView(calendarDate: CalendarDate(date: .now))
+        .padding()
 }

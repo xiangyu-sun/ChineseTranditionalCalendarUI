@@ -66,3 +66,14 @@ public struct FourPillarsView: View {
         return "四柱: " + pillars.map { "\($0.0)\($0.1?.description ?? "")" }.joined(separator: ", ")
     }
 }
+
+#Preview {
+    FourPillarsView(calendarDate: CalendarDate(date: .now))
+        .padding()
+}
+
+#Preview("Traditional theme") {
+    FourPillarsView(calendarDate: CalendarDate(date: .now))
+        .padding()
+        .calendarTheme(.traditional)
+}

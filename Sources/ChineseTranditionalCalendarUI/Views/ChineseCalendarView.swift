@@ -188,3 +188,16 @@ enum CalendarTab: String, CaseIterable, Identifiable {
         }
     }
 }
+
+#Preview("Default") {
+    ChineseCalendarView()
+}
+
+#Preview("Minimal config") {
+    ChineseCalendarView(configuration: .minimal)
+}
+
+#Preview("Traditional theme") {
+    ChineseCalendarView()
+        .calendarTheme(.traditional)
+}

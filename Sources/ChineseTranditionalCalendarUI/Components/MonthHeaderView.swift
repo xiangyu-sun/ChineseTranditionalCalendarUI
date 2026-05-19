@@ -75,3 +75,12 @@ public struct MonthHeaderView: View {
         return parts.joined(separator: " ")
     }
 }
+
+#Preview {
+    MonthHeaderView(
+        month: CalendarMonth(containing: .now),
+        onPrevious: {},
+        onNext: {},
+        onToday: {}
+    )
+}

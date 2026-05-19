@@ -36,7 +36,17 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     public var lunarDayName: String { lunarDay?.name ?? "" }
 
     /// Whether this is the first day of a lunar month (初一).
-    public var isFirstOfLunarMonth: Bool { lunarDay == .chuyi }
+    public var isFirstOfLunarMonth: Bool { lunarDay == .day1 }
+
+    /// Traditional Chinese name for the lunar month this date falls in (e.g. "正月", "二月").
+    /// Prefixes with "闰" for leap months.
+    public var lunarMonthName: String {
+        let comps = chineseComponents
+        guard let month = comps.month, month >= 1, month <= 12 else { return lunarDayName }
+        let names = ["正月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"]
+        let prefix = comps.isLeapMonth == true ? "闰" : ""
+        return prefix + names[month - 1]
+    }
 
     /// Full Chinese date string such as "甲辰年三月初一".
     public var chineseYearMonthDate: String { date.chineseYearMonthDate }

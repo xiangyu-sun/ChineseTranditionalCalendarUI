@@ -158,13 +158,32 @@ public struct YearlyOverviewView: View {
     }
 
     private func monthName(for month: Int) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM"
         var comps = DateComponents()
         comps.year = viewModel.year
         comps.month = month
         comps.day = 1
         guard let date = Calendar.current.date(from: comps) else { return "" }
-        return formatter.string(from: date)
+        return YearlyOverviewView.monthFormatter.string(from: date)
     }
+
+    private static let monthFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "MMM"
+        return f
+    }()
+}
+
+#Preview {
+    @Previewable @State var vm = YearlyCalendarViewModel()
+    ScrollView {
+        YearlyOverviewView(viewModel: vm)
+    }
+}
+
+#Preview("Traditional theme") {
+    @Previewable @State var vm = YearlyCalendarViewModel()
+    ScrollView {
+        YearlyOverviewView(viewModel: vm)
+    }
+    .calendarTheme(.traditional)
 }

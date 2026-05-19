@@ -61,3 +61,14 @@ public struct JieqiDetailView: View {
         .accessibilityLabel("\(jieqi.chineseName), \(jieqi.healthTip)")
     }
 }
+
+#Preview {
+    JieqiDetailView(jieqi: .springEquinox)
+        .padding()
+}
+
+#Preview("Traditional theme") {
+    JieqiDetailView(jieqi: .winterSolstice)
+        .padding()
+        .calendarTheme(.traditional)
+}

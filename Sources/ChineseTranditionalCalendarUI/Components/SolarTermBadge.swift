@@ -23,3 +23,11 @@ public struct SolarTermBadge: View {
             .accessibilityLabel("节气: \(jieqi.chineseName)")
     }
 }
+
+#Preview {
+    HStack(spacing: 8) {
+        SolarTermBadge(jieqi: .springEquinox)
+        SolarTermBadge(jieqi: .winterSolstice)
+    }
+    .padding()
+}

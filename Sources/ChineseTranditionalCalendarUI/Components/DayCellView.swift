@@ -1,4 +1,5 @@
 import SwiftUI
+import ChineseAstrologyCalendar
 
 /// A single day cell in the monthly calendar grid.
 ///
@@ -59,8 +60,7 @@ public struct DayCellView: View {
     /// Text shown below the day number — lunar month name on 初一, else lunar day name.
     private var lunarDisplayText: String {
         if calendarDate.isFirstOfLunarMonth {
-            // Show the lunar month name on the 1st of each lunar month
-            return calendarDate.lunarDayName
+            return calendarDate.lunarMonthName
         }
         return calendarDate.lunarDayName
     }
@@ -98,4 +98,27 @@ public struct DayCellView: View {
         }
         return parts.joined(separator: ", ")
     }
+}
+
+#Preview("Day states") {
+    let today = CalendarDate(date: .now)
+    let past = CalendarDate(
+        date: Calendar.current.date(from: DateComponents(year: 2026, month: 3, day: 15))!
+    )
+    // Spring Equinox 2026 — likely a solar term start
+    let termDay = CalendarDate(
+        date: Calendar.current.date(from: DateComponents(year: 2026, month: 3, day: 20))!
+    )
+    return HStack(spacing: 4) {
+        DayCellView(calendarDate: past)
+        DayCellView(calendarDate: today, isSelected: true)
+        DayCellView(calendarDate: termDay)
+    }
+    .padding()
+}
+
+#Preview("Traditional theme") {
+    DayCellView(calendarDate: CalendarDate(date: .now), isSelected: true)
+        .padding()
+        .calendarTheme(.traditional)
 }

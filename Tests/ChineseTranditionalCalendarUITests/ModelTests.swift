@@ -105,12 +105,53 @@ struct CalendarMonthTests {
         #expect(month.numberOfDays == 29)
     }
 
-    @Test("Grid has correct number of cells (multiple of 7)")
+    @Test("Grid is always exactly 42 cells")
     func gridCells() {
-        let month = CalendarMonth(year: 2026, month: 3)
-        let grid = month.gridDates
-        #expect(grid.count % 7 == 0)
-        #expect(grid.count >= 31)
+        // March 2026 (31 days) — previously only multiple-of-7
+        #expect(CalendarMonth(year: 2026, month: 3).gridDates.count == 42)
+        // February 2026 (28 days) — previously stopped at 28
+        #expect(CalendarMonth(year: 2026, month: 2).gridDates.count == 42)
+        // February 2024 leap (29 days)
+        #expect(CalendarMonth(year: 2024, month: 2).gridDates.count == 42)
+    }
+
+    @Test("leadingSpaces shifts correctly for Monday-start calendar")
+    func leadingSpacesMondayStart() {
+        // March 2026: 1st is Sunday (weekday=1).
+        // Sunday-start (firstWeekday=1): leadingSpaces = (1 - 1 + 7) % 7 = 0
+        // Monday-start (firstWeekday=2): leadingSpaces = (1 - 2 + 7) % 7 = 6
+        var sundayCal = Calendar(identifier: .gregorian)
+        sundayCal.firstWeekday = 1
+        var mondayCal = Calendar(identifier: .gregorian)
+        mondayCal.firstWeekday = 2
+
+        let marchSunday = CalendarMonth(year: 2026, month: 3, calendar: sundayCal)
+        let marchMonday = CalendarMonth(year: 2026, month: 3, calendar: mondayCal)
+
+        #expect(marchSunday.leadingSpaces == 0)
+        #expect(marchMonday.leadingSpaces == 6)
+    }
+
+    @Test("lunarMonthName returns month name, not day name")
+    func lunarMonthName() {
+        // lunarMonthName always returns the Chinese month name (ends with 月),
+        // which differs from lunarDayName (初一, 十五, etc.)
+        let calDate = CalendarDate(date: .now)
+        let monthName = calDate.lunarMonthName
+        #expect(!monthName.isEmpty)
+        #expect(monthName.hasSuffix("月"))
+        #expect(monthName != calDate.lunarDayName)
+    }
+
+    @Test("lunarMonthName on Chinese New Year 2026 is 正月")
+    func lunarMonthNameCNY() {
+        // Chinese New Year 2026 is February 17 — 正月初一
+        let cny2026 = Calendar.current.date(
+            from: DateComponents(year: 2026, month: 2, day: 17)
+        )!
+        let calDate = CalendarDate(date: cny2026)
+        #expect(calDate.isFirstOfLunarMonth)
+        #expect(calDate.lunarMonthName == "正月")
     }
 
     @Test("days array has correct count")

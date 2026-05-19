@@ -34,10 +34,10 @@ public struct WeekStripView: View {
 
     // MARK: - Week Dates
 
-    /// The 7 dates of the current week based on the selected date or today.
+    /// The 7 dates of the current week based on the selected date or the displayed month's first day.
     private var currentWeekDates: [CalendarDate] {
         let calendar = viewModel.currentMonth.calendar
-        let anchor = viewModel.selectedDate?.date ?? Date.now
+        let anchor = viewModel.selectedDate?.date ?? viewModel.currentMonth.firstDayOfMonth
         guard let weekInterval = calendar.dateInterval(of: .weekOfYear, for: anchor) else {
             return []
         }
@@ -50,7 +50,7 @@ public struct WeekStripView: View {
     }
 
     private var referenceDate: Date {
-        viewModel.selectedDate?.date ?? .now
+        viewModel.selectedDate?.date ?? viewModel.currentMonth.firstDayOfMonth
     }
 
     // MARK: - Sub-views
@@ -127,18 +127,24 @@ public struct WeekStripView: View {
         DragGesture(minimumDistance: 50)
             .onEnded { value in
                 let calendar = viewModel.currentMonth.calendar
-                let anchor = viewModel.selectedDate?.date ?? Date.now
+                let anchor = viewModel.selectedDate?.date ?? viewModel.currentMonth.firstDayOfMonth
                 if value.translation.width < -50 {
                     if let next = calendar.date(byAdding: .weekOfYear, value: 1, to: anchor) {
-                        viewModel.select(CalendarDate(date: next, calendar: calendar))
                         viewModel.navigate(to: next)
+                        viewModel.select(CalendarDate(date: next, calendar: calendar))
                     }
                 } else if value.translation.width > 50 {
                     if let prev = calendar.date(byAdding: .weekOfYear, value: -1, to: anchor) {
-                        viewModel.select(CalendarDate(date: prev, calendar: calendar))
                         viewModel.navigate(to: prev)
+                        viewModel.select(CalendarDate(date: prev, calendar: calendar))
                     }
                 }
             }
     }
+}
+
+#Preview {
+    @Previewable @State var vm = MonthlyCalendarViewModel()
+    WeekStripView(viewModel: vm)
+        .padding()
 }
