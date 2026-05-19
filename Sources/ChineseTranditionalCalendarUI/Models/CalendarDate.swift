@@ -36,7 +36,7 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     public var lunarDayName: String { lunarDay?.name ?? "" }
 
     /// Whether this is the first day of a lunar month (初一).
-    public var isFirstOfLunarMonth: Bool { lunarDay == .chuyi }
+    public var isFirstOfLunarMonth: Bool { lunarDay == .day1 }
 
     /// Traditional Chinese name for the lunar month this date falls in (e.g. "正月", "二月").
     /// Prefixes with "闰" for leap months.

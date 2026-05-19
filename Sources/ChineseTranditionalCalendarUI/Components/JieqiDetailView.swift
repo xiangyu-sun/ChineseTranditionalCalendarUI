@@ -63,12 +63,12 @@ public struct JieqiDetailView: View {
 }
 
 #Preview {
-    JieqiDetailView(jieqi: .chunfen)
+    JieqiDetailView(jieqi: .springEquinox)
         .padding()
 }
 
 #Preview("Traditional theme") {
-    JieqiDetailView(jieqi: .dongzhi)
+    JieqiDetailView(jieqi: .winterSolstice)
         .padding()
         .calendarTheme(.traditional)
 }

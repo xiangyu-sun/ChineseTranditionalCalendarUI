@@ -95,14 +95,14 @@ struct SolarTermBadgeSnapshots {
 
     @Test func springEquinox() {
         assertSnapshot(
-            of: SolarTermBadge(jieqi: .chunfen).padding(8),
+            of: SolarTermBadge(jieqi: .springEquinox).padding(8),
             as: .image
         )
     }
 
     @Test func winterSolstice_traditionalTheme() {
         assertSnapshot(
-            of: SolarTermBadge(jieqi: .dongzhi)
+            of: SolarTermBadge(jieqi: .winterSolstice)
                 .padding(8)
                 .calendarTheme(.traditional),
             as: .image
