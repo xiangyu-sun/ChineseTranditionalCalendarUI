@@ -21,6 +21,10 @@ let package = Package(
             url: "https://github.com/xiangyu-sun/ChineseAstrologyCalendar.git",
             branch: "master"
         ),
+        .package(
+            url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
+            from: "1.17.0"
+        ),
     ],
     targets: [
         .target(
@@ -29,7 +33,10 @@ let package = Package(
         ),
         .testTarget(
             name: "ChineseTranditionalCalendarUITests",
-            dependencies: ["ChineseTranditionalCalendarUI"]
+            dependencies: [
+                "ChineseTranditionalCalendarUI",
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+            ]
         ),
     ]
 )

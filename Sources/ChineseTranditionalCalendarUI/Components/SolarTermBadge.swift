@@ -26,8 +26,8 @@ public struct SolarTermBadge: View {
 
 #Preview {
     HStack(spacing: 8) {
-        SolarTermBadge(jieqi: .springEquinox)
-        SolarTermBadge(jieqi: .winterSolstice)
+        SolarTermBadge(jieqi: .chunfen)
+        SolarTermBadge(jieqi: .dongzhi)
     }
     .padding()
 }

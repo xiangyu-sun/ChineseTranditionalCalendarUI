@@ -17,6 +17,13 @@ swift test --filter CalendarMonthTests
 
 # Run a single test by name
 swift test --filter "CalendarDateTests/gregorianComponents"
+
+# Snapshot tests — iOS simulator only (skipped under macOS swift test)
+# First run records baselines into Tests/.../SnapshotTests/__Snapshots__/; commit them.
+xcodebuild test \
+  -scheme ChineseTranditionalCalendarUI \
+  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  | xcpretty
 ```
 
 ## Architecture
@@ -49,7 +56,10 @@ Components (`DayCellView`, `SolarTermBadge`, `FourPillarsView`, `TwelveGodsView`
 
 ### Tests
 
-Use Swift Testing (`@Suite`, `@Test`, `#expect`) — not XCTest. Tests live in `Tests/ChineseTranditionalCalendarUITests/`. `ModelTests.swift` covers `CalendarDate` and `CalendarMonth`. `ViewModelTests.swift` covers ViewModel navigation.
+Use Swift Testing (`@Suite`, `@Test`, `#expect`) — not XCTest. Tests live in `Tests/ChineseTranditionalCalendarUITests/`.
+- `ModelTests.swift` — `CalendarDate`, `CalendarMonth`
+- `ViewModelTests.swift` — ViewModel navigation
+- `SnapshotTests.swift` — pixel snapshots via `pointfreeco/swift-snapshot-testing`; gated `#if os(iOS)`, skipped under `swift test` on macOS. Uses `record: .missing` — records new baselines automatically on first iOS sim run, then diffs on subsequent runs. Baselines stored in `__Snapshots__/` next to the test file; must be committed. Uses fixed dates (2026-03-15, 2026-03-20, 2026-02-17) — never `.now`.
 
 ### Example app
 
