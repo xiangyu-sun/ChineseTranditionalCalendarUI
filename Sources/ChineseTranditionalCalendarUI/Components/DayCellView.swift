@@ -48,7 +48,7 @@ public struct DayCellView: View {
         .padding(theme.cellPadding)
         .frame(maxWidth: .infinity, minHeight: 44)
         .background(cellBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(.rect(cornerRadius: 8))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
         .accessibilityAddTraits(isSelected ? .isSelected : [])

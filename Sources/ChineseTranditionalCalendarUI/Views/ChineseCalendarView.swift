@@ -14,7 +14,7 @@ public struct ChineseCalendarView: View {
     @State private var monthlyViewModel: MonthlyCalendarViewModel
     @State private var yearlyViewModel: YearlyCalendarViewModel
     @State private var selectedTab: CalendarTab = .monthly
-    @State private var showDayDetail = false
+    @State private var dayDetailDate: CalendarDate?
 
     private let configuration: CalendarConfiguration
 
@@ -41,29 +41,27 @@ public struct ChineseCalendarView: View {
                 yearlyContent
             }
         }
-        .sheet(isPresented: $showDayDetail) {
-            if let selected = monthlyViewModel.selectedDate {
-                NavigationStack {
-                    DayDetailView(
-                        calendarDate: selected,
-                        configuration: configuration
-                    )
-                    .navigationTitle(selected.chineseYearMonthDate)
-                    #if os(iOS) || os(visionOS)
-                    .navigationBarTitleDisplayMode(.inline)
-                    #endif
-                    .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button("Done") {
-                                showDayDetail = false
-                            }
+        .sheet(item: $dayDetailDate) { selected in
+            NavigationStack {
+                DayDetailView(
+                    calendarDate: selected,
+                    configuration: configuration
+                )
+                .navigationTitle(selected.chineseYearMonthDate)
+                #if os(iOS) || os(visionOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            dayDetailDate = nil
                         }
                     }
                 }
-                #if !os(watchOS)
-                .presentationDetents([.medium, .large])
-                #endif
             }
+            #if !os(watchOS)
+            .presentationDetents([.medium, .large])
+            #endif
         }
     }
 
@@ -92,10 +90,12 @@ public struct ChineseCalendarView: View {
                 Divider()
                     .padding(.top, 8)
 
-                dayPreview(selected)
-                    .onTapGesture {
-                        showDayDetail = true
-                    }
+                Button {
+                    dayDetailDate = selected
+                } label: {
+                    dayPreview(selected)
+                }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -168,24 +168,6 @@ public struct ChineseCalendarView: View {
         .padding(.horizontal)
         .accessibilityLabel("View details for \(calDate.chineseYearMonthDate)")
         .accessibilityHint("Double tap to view full almanac")
-    }
-}
-
-// MARK: - Tab Type
-
-enum CalendarTab: String, CaseIterable, Identifiable {
-    case monthly
-    case weekly
-    case yearly
-
-    var id: String { rawValue }
-
-    var label: String {
-        switch self {
-        case .monthly: "Month"
-        case .weekly: "Week"
-        case .yearly: "Year"
-        }
     }
 }
 

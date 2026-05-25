@@ -84,7 +84,7 @@ public struct CalendarMonth: Identifiable, Hashable, Sendable {
 
     private static let titleFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "MMMM yyyy"
+        f.dateFormat = "MMMM y"
         return f
     }()
 

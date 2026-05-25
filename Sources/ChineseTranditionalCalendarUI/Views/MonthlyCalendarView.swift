@@ -51,14 +51,16 @@ public struct MonthlyCalendarView: View {
         return LazyVGrid(columns: columns, spacing: theme.rowSpacing) {
             ForEach(Array(gridDates.enumerated()), id: \.offset) { _, calDate in
                 if let calDate {
-                    DayCellView(
-                        calendarDate: calDate,
-                        isSelected: calDate == viewModel.selectedDate,
-                        configuration: viewModel.configuration
-                    )
-                    .onTapGesture {
+                    Button {
                         viewModel.select(calDate)
+                    } label: {
+                        DayCellView(
+                            calendarDate: calDate,
+                            isSelected: calDate == viewModel.selectedDate,
+                            configuration: viewModel.configuration
+                        )
                     }
+                    .buttonStyle(.plain)
                 } else {
                     Color.clear
                         .frame(minHeight: 44)

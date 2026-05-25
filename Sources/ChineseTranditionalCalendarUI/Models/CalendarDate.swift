@@ -107,7 +107,7 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     public var riZhu: Ganzhi? { date.dateComponentsFromCurrentCalendar.riZhu }
 
     /// Hour pillar (时柱) — reflects current moment; shiZhu changes every two hours.
-    public var shiZhu: Ganzhi? { Date().dateComponentsFromCurrentCalendar.shiZhu }
+    public var shiZhu: Ganzhi? { Date.now.dateComponentsFromCurrentCalendar.shiZhu }
 
     /// Zodiac animal for the year.
     public var zodiac: Zodiac? { chineseComponents.zodiac }

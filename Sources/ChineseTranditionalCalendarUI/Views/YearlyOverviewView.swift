@@ -10,6 +10,7 @@ public struct YearlyOverviewView: View {
     var onMonthSelected: ((CalendarMonth) -> Void)?
 
     @Environment(\.calendarTheme) private var theme
+    @ScaledMetric(relativeTo: .caption2) private var miniCellFontSize: CGFloat = 7
 
     public init(
         viewModel: YearlyCalendarViewModel,
@@ -36,10 +37,12 @@ public struct YearlyOverviewView: View {
 
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(viewModel.months, id: \.id) { month in
-                    miniMonthView(month)
-                        .onTapGesture {
-                            onMonthSelected?(month)
-                        }
+                    Button {
+                        onMonthSelected?(month)
+                    } label: {
+                        miniMonthView(month)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal)
@@ -51,10 +54,8 @@ public struct YearlyOverviewView: View {
 
     private var yearHeader: some View {
         HStack {
-            Button(action: viewModel.goToPreviousYear) {
-                Image(systemName: "chevron.left")
-            }
-            .accessibilityLabel("Previous year")
+            Button("Previous year", systemImage: "chevron.left", action: viewModel.goToPreviousYear)
+                .labelStyle(.iconOnly)
 
             Spacer()
 
@@ -71,15 +72,11 @@ public struct YearlyOverviewView: View {
 
             Spacer()
 
-            Button(action: viewModel.goToCurrentYear) {
-                Image(systemName: "calendar.circle")
-            }
-            .accessibilityLabel("Current year")
+            Button("Current year", systemImage: "calendar.circle", action: viewModel.goToCurrentYear)
+                .labelStyle(.iconOnly)
 
-            Button(action: viewModel.goToNextYear) {
-                Image(systemName: "chevron.right")
-            }
-            .accessibilityLabel("Next year")
+            Button("Next year", systemImage: "chevron.right", action: viewModel.goToNextYear)
+                .labelStyle(.iconOnly)
         }
         .padding(.horizontal)
     }
@@ -89,7 +86,7 @@ public struct YearlyOverviewView: View {
     @ViewBuilder
     private func miniMonthView(_ month: CalendarMonth) -> some View {
         VStack(spacing: 2) {
-            Text(monthName(for: month.month))
+            Text(month.firstDayOfMonth, format: .dateTime.month(.abbreviated))
                 .font(.caption)
                 .fontWeight(.semibold)
 
@@ -98,7 +95,7 @@ public struct YearlyOverviewView: View {
         .padding(6)
         .background(.quaternary.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(monthName(for: month.month)) \(viewModel.year)")
+        .accessibilityLabel("\(month.firstDayOfMonth.formatted(.dateTime.month(.wide))) \(viewModel.year)")
     }
 
     @ViewBuilder
@@ -109,14 +106,14 @@ public struct YearlyOverviewView: View {
             // Leading spaces
             ForEach(0..<month.leadingSpaces, id: \.self) { _ in
                 Text("")
-                    .font(.system(size: 7))
+                    .font(.system(size: miniCellFontSize))
                     .frame(maxWidth: .infinity, minHeight: 10)
             }
 
             // Days
             ForEach(month.days) { calDate in
                 Text("\(calDate.dayOfMonth)")
-                    .font(.system(size: 7))
+                    .font(.system(size: miniCellFontSize))
                     .foregroundStyle(miniDayColor(calDate))
                     .frame(maxWidth: .infinity, minHeight: 10)
             }
@@ -157,20 +154,6 @@ public struct YearlyOverviewView: View {
         return parts.isEmpty ? nil : parts.joined(separator: " ")
     }
 
-    private func monthName(for month: Int) -> String {
-        var comps = DateComponents()
-        comps.year = viewModel.year
-        comps.month = month
-        comps.day = 1
-        guard let date = Calendar.current.date(from: comps) else { return "" }
-        return YearlyOverviewView.monthFormatter.string(from: date)
-    }
-
-    private static let monthFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "MMM"
-        return f
-    }()
 }
 
 #Preview {

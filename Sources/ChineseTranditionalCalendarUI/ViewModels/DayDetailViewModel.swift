@@ -2,6 +2,7 @@ import SwiftUI
 
 /// View model for `DayDetailView`.
 @Observable
+@MainActor
 public final class DayDetailViewModel {
 
     /// The date being displayed.

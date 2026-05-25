@@ -20,10 +20,12 @@ public struct WeekStripView: View {
 
             HStack(spacing: 4) {
                 ForEach(currentWeekDates) { calDate in
-                    weekDayCell(calDate)
-                        .onTapGesture {
-                            viewModel.select(calDate)
-                        }
+                    Button {
+                        viewModel.select(calDate)
+                    } label: {
+                        weekDayCell(calDate)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal)
@@ -84,13 +86,13 @@ public struct WeekStripView: View {
 
             if let jieqi = calDate.jieqi, viewModel.configuration.showSolarTerms {
                 Text(jieqi.chineseName)
-                    .font(.system(size: 8))
+                    .font(.caption2)
                     .foregroundStyle(theme.solarTermColor)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
             } else if viewModel.configuration.showLunarDays {
                 Text(calDate.lunarDayName)
-                    .font(.system(size: 8))
+                    .font(.caption2)
                     .foregroundStyle(theme.secondaryTextColor)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
@@ -111,7 +113,6 @@ public struct WeekStripView: View {
         }
         .accessibilityLabel("\(calDate.dayOfMonth), \(calDate.lunarDayName)")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityAddTraits(.isButton)
     }
 
     private func dayColor(_ calDate: CalendarDate, isSelected: Bool) -> Color {

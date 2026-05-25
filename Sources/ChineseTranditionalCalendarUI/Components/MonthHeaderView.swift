@@ -24,11 +24,9 @@ public struct MonthHeaderView: View {
 
     public var body: some View {
         HStack {
-            Button(action: onPrevious) {
-                Image(systemName: "chevron.left")
-                    .imageScale(.large)
-            }
-            .accessibilityLabel("Previous month")
+            Button("Previous month", systemImage: "chevron.left", action: onPrevious)
+                .labelStyle(.iconOnly)
+                .imageScale(.large)
 
             Spacer()
 
@@ -47,17 +45,13 @@ public struct MonthHeaderView: View {
 
             Spacer()
 
-            Button(action: onToday) {
-                Image(systemName: "calendar.circle")
-                    .imageScale(.large)
-            }
-            .accessibilityLabel("Go to today")
+            Button("Go to today", systemImage: "calendar.circle", action: onToday)
+                .labelStyle(.iconOnly)
+                .imageScale(.large)
 
-            Button(action: onNext) {
-                Image(systemName: "chevron.right")
-                    .imageScale(.large)
-            }
-            .accessibilityLabel("Next month")
+            Button("Next month", systemImage: "chevron.right", action: onNext)
+                .labelStyle(.iconOnly)
+                .imageScale(.large)
         }
         .padding(.horizontal)
         .padding(.vertical, 8)

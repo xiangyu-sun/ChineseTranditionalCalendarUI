@@ -2,6 +2,7 @@ import SwiftUI
 
 /// View model for `YearlyOverviewView`.
 @Observable
+@MainActor
 public final class YearlyCalendarViewModel {
 
     /// The year being displayed.

@@ -5,6 +5,7 @@ import Foundation
 // MARK: - MonthlyCalendarViewModel Tests
 
 @Suite("MonthlyCalendarViewModel Tests")
+@MainActor
 struct MonthlyCalendarViewModelTests {
 
     @Test("Initializes with current month")
@@ -145,6 +146,7 @@ struct MonthlyCalendarViewModelTests {
 // MARK: - YearlyCalendarViewModel Tests
 
 @Suite("YearlyCalendarViewModel Tests")
+@MainActor
 struct YearlyCalendarViewModelTests {
 
     @Test("Initializes with current year by default")
@@ -201,6 +203,7 @@ struct YearlyCalendarViewModelTests {
 // MARK: - DayDetailViewModel Tests
 
 @Suite("DayDetailViewModel Tests")
+@MainActor
 struct DayDetailViewModelTests {
 
     @Test("Initializes with correct date")

@@ -71,9 +71,9 @@ public struct DayDetailView: View {
     private var dateHeader: some View {
         VStack(spacing: 4) {
             // Gregorian date
-            Text(gregorianDateString)
+            Text(calendarDate.date, format: .dateTime.day().month(.wide).year())
                 .font(.title2)
-                .fontWeight(.bold)
+                .bold()
 
             // Chinese calendar date
             Text(calendarDate.chineseYearMonthDate)
@@ -89,18 +89,8 @@ public struct DayDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Date: \(gregorianDateString), \(calendarDate.chineseYearMonthDate)")
+        .accessibilityLabel("Date: \(calendarDate.date.formatted(date: .long, time: .omitted)), \(calendarDate.chineseYearMonthDate)")
     }
-
-    private var gregorianDateString: String {
-        DayDetailView.dateFormatter.string(from: calendarDate.date)
-    }
-
-    private static let dateFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateStyle = .long
-        return f
-    }()
 
     // MARK: - Shichen Section
 

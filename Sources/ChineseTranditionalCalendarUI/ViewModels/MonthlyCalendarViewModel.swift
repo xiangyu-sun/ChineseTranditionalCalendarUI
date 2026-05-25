@@ -4,6 +4,7 @@ import SwiftUI
 ///
 /// Uses the `@Observable` macro (iOS 17+) instead of `ObservableObject`.
 @Observable
+@MainActor
 public final class MonthlyCalendarViewModel {
 
     // MARK: - Published State
