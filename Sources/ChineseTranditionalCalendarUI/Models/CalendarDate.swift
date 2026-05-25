@@ -104,10 +104,10 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     public var yueZhu: Ganzhi? { chineseComponents.yueZhu }
 
     /// Day pillar (日柱).
-    public var riZhu: Ganzhi? { chineseComponents.riZhu }
+    public var riZhu: Ganzhi? { date.dateComponentsFromCurrentCalendar.riZhu }
 
-    /// Hour pillar (时柱) — based on current time, not midnight.
-    public var shiZhu: Ganzhi? { chineseComponents.shiZhu }
+    /// Hour pillar (时柱) — reflects current moment; shiZhu changes every two hours.
+    public var shiZhu: Ganzhi? { Date().dateComponentsFromCurrentCalendar.shiZhu }
 
     /// Zodiac animal for the year.
     public var zodiac: Zodiac? { chineseComponents.zodiac }
