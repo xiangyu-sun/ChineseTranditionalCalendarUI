@@ -97,6 +97,8 @@ public struct ChineseCalendarView: View {
                 }
                 .buttonStyle(.plain)
             }
+
+            Spacer()
         }
     }
 
