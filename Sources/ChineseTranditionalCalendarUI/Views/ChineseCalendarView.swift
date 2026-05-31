@@ -73,7 +73,9 @@ public struct ChineseCalendarView: View {
                 Text(tab.label).tag(tab)
             }
         }
+      #if !os(watchOS)
         .pickerStyle(.segmented)
+      #endif
         .padding(.horizontal)
         .padding(.vertical, 8)
         .accessibilityLabel("Calendar view mode")
