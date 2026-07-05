@@ -29,9 +29,11 @@ public struct MoonPhaseView: View {
                         Text(phase.modernChineseName(lunarDay))
                             .font(.body)
                             .fontWeight(.medium)
-                        Text(phase.acientChineseName(lunarDay))
-                            .font(.caption)
-                            .foregroundStyle(theme.secondaryTextColor)
+                        if phase.acientChineseName(lunarDay) != phase.modernChineseName(lunarDay) {
+                            Text(phase.acientChineseName(lunarDay))
+                                .font(.caption)
+                                .foregroundStyle(theme.secondaryTextColor)
+                        }
                         Text(lunarDay.name)
                             .font(.caption)
                             .foregroundStyle(theme.secondaryTextColor)
