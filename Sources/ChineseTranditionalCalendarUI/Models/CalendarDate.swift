@@ -56,13 +56,23 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     /// The solar term (节气) that **starts** on this date, if any.
     ///
     /// Returns non-nil only when this date is the first day of a new solar term period.
-    /// Uses comparison with the previous day's solar term period to determine the boundary.
+    /// Solar term transitions are defined against China Standard Time regardless of the
+    /// viewer's device timezone, so the (year, month, day) this ``CalendarDate`` represents
+    /// is re-anchored to a China Standard Time midnight rather than derived from `date`
+    /// (which may carry the device's own timezone offset). The boundary is found by
+    /// comparing this day against tomorrow (not yesterday): a change between today and
+    /// yesterday would mean the transition happened yesterday, not today.
     public var jieqi: Jieqi? {
-        let todayTerm = date.jieqi
-        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: date) ?? date
-        let yesterdayTerm = yesterday.jieqi
-        // If today's term differs from yesterday's, this date marks the start of a new jieqi.
-        if todayTerm != yesterdayTerm {
+        var chinaCalendar = Calendar(identifier: .gregorian)
+        chinaCalendar.timeZone = TimeZone(secondsFromGMT: 8 * 3600)!
+        guard let todayStart = chinaCalendar.date(from: DateComponents(year: year, month: month, day: dayOfMonth)) else {
+            return nil
+        }
+        let tomorrowStart = chinaCalendar.date(byAdding: .day, value: 1, to: todayStart) ?? todayStart
+        let todayTerm = todayStart.jieqi
+        let tomorrowTerm = tomorrowStart.jieqi
+        // If today's term differs from tomorrow's, the transition happens during today.
+        if todayTerm != tomorrowTerm {
             return todayTerm
         }
         return nil
