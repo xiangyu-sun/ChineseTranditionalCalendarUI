@@ -25,6 +25,7 @@ private enum Fixture {
 // MARK: - DayCellView
 
 @Suite("DayCellView Snapshots", .snapshots(record: .missing))
+@MainActor
 struct DayCellViewSnapshots {
 
     @Test func regularDay() {
@@ -67,6 +68,7 @@ struct DayCellViewSnapshots {
 // MARK: - WeekdayHeaderView
 
 @Suite("WeekdayHeaderView Snapshots", .snapshots(record: .missing))
+@MainActor
 struct WeekdayHeaderViewSnapshots {
 
     @Test func sundayStart() {
@@ -91,6 +93,7 @@ struct WeekdayHeaderViewSnapshots {
 // MARK: - SolarTermBadge
 
 @Suite("SolarTermBadge Snapshots", .snapshots(record: .missing))
+@MainActor
 struct SolarTermBadgeSnapshots {
 
     @Test func springEquinox() {
@@ -113,6 +116,7 @@ struct SolarTermBadgeSnapshots {
 // MARK: - FourPillarsView
 
 @Suite("FourPillarsView Snapshots", .snapshots(record: .missing))
+@MainActor
 struct FourPillarsViewSnapshots {
 
     @Test func defaultTheme() {
@@ -135,6 +139,7 @@ struct FourPillarsViewSnapshots {
 // MARK: - MonthlyCalendarView
 
 @Suite("MonthlyCalendarView Snapshots", .snapshots(record: .missing))
+@MainActor
 struct MonthlyCalendarViewSnapshots {
 
     @Test func defaultConfig() {
@@ -174,6 +179,7 @@ struct MonthlyCalendarViewSnapshots {
 // MARK: - DayDetailView
 
 @Suite("DayDetailView Snapshots", .snapshots(record: .missing))
+@MainActor
 struct DayDetailViewSnapshots {
 
     @Test func solarTermDay_defaultConfig() {
