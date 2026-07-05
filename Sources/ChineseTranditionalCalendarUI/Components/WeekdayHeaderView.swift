@@ -25,7 +25,7 @@ public struct WeekdayHeaderView: View {
 
     public var body: some View {
         LazyVGrid(
-            columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7),
+            columns: Array(repeating: GridItem(.flexible(), spacing: theme.columnSpacing), count: 7),
             spacing: 0
         ) {
             ForEach(Array(symbols.enumerated()), id: \.offset) { index, symbol in
