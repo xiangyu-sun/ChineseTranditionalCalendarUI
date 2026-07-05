@@ -23,28 +23,33 @@ public struct MonthlyCalendarView: View {
     @Environment(\.calendarTheme) private var theme
 
     public var body: some View {
-        VStack(spacing: 8) {
-            MonthHeaderView(
-                month: viewModel.currentMonth,
-                onPrevious: viewModel.goToPreviousMonth,
-                onNext: viewModel.goToNextMonth,
-                onToday: viewModel.goToToday
-            )
+        GeometryReader { geo in
+            let adapted = adaptedTheme(for: geo.size.width)
 
-            WeekdayHeaderView(calendar: viewModel.currentMonth.calendar)
+            VStack(spacing: 8) {
+                MonthHeaderView(
+                    month: viewModel.currentMonth,
+                    onPrevious: viewModel.goToPreviousMonth,
+                    onNext: viewModel.goToNextMonth,
+                    onToday: viewModel.goToToday
+                )
 
-            monthGrid
+                WeekdayHeaderView(calendar: viewModel.currentMonth.calendar)
+
+                monthGrid(theme: adapted)
+            }
+            .environment(\.calendarTheme, adapted)
+            .background(adapted.backgroundColor)
+            .gesture(swipeGesture)
+            .animation(.easeInOut(duration: 0.2), value: viewModel.currentMonth)
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Monthly calendar, \(viewModel.currentMonth.title)")
         }
-        .background(theme.backgroundColor)
-        .gesture(swipeGesture)
-        .animation(.easeInOut(duration: 0.2), value: viewModel.currentMonth)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Monthly calendar, \(viewModel.currentMonth.title)")
     }
 
     // MARK: - Month Grid
 
-    private var monthGrid: some View {
+    private func monthGrid(theme: CalendarTheme) -> some View {
         let gridDates = viewModel.currentMonth.gridDates
         let columns = Array(repeating: GridItem(.flexible(), spacing: theme.columnSpacing), count: 7)
 
@@ -68,6 +73,35 @@ public struct MonthlyCalendarView: View {
             }
         }
         .padding(.horizontal)
+    }
+
+    // MARK: - Adaptive Theme
+
+    /// Scales column spacing and day-cell fonts with the per-column width
+    /// actually available, so a narrow `.medium` sheet on iPhone and a roomy
+    /// `.large` sheet on iPad don't render with identical spacing/type sizes.
+    private func adaptedTheme(for width: CGFloat) -> CalendarTheme {
+        let perColumn = width / 7
+        var adapted = theme
+        switch perColumn {
+        case ..<40:
+            adapted.columnSpacing = 0
+            adapted.dayNumberFont = .callout
+            adapted.lunarDayFont = .caption2
+        case 40 ..< 60:
+            adapted.columnSpacing = 2
+            adapted.dayNumberFont = .body
+            adapted.lunarDayFont = .caption
+        case 60 ..< 90:
+            adapted.columnSpacing = 4
+            adapted.dayNumberFont = .title3
+            adapted.lunarDayFont = .footnote
+        default:
+            adapted.columnSpacing = 6
+            adapted.dayNumberFont = .title2
+            adapted.lunarDayFont = .subheadline
+        }
+        return adapted
     }
 
     // MARK: - Swipe Gesture
