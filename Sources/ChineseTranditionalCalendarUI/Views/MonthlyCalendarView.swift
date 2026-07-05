@@ -24,19 +24,21 @@ public struct MonthlyCalendarView: View {
 
     public var body: some View {
         VStack(spacing: 8) {
-            MonthHeaderView(
-                month: viewModel.currentMonth,
-                onPrevious: viewModel.goToPreviousMonth,
-                onNext: viewModel.goToNextMonth,
-                onToday: viewModel.goToToday
-            )
+            if viewModel.configuration.showsHeader {
+                MonthHeaderView(
+                    month: viewModel.currentMonth,
+                    onPrevious: viewModel.goToPreviousMonth,
+                    onNext: viewModel.goToNextMonth,
+                    onToday: viewModel.goToToday
+                )
+            }
 
             WeekdayHeaderView(calendar: viewModel.currentMonth.calendar)
 
             monthGrid
         }
         .background(theme.backgroundColor)
-        .gesture(swipeGesture)
+        .gesture(swipeGesture, isEnabled: viewModel.configuration.showsHeader)
         .animation(.easeInOut(duration: 0.2), value: viewModel.currentMonth)
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Monthly calendar, \(viewModel.currentMonth.title)")

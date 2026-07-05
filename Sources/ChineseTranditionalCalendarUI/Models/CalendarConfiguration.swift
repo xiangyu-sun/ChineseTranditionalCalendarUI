@@ -36,6 +36,9 @@ public struct CalendarConfiguration: Sendable {
     /// The first day of the week (1 = Sunday, 2 = Monday).
     public var firstWeekday: Int
 
+    /// Show the month header (title + prev/next/today controls).
+    public var showsHeader: Bool
+
     // MARK: - Init
 
     public init(
@@ -47,7 +50,8 @@ public struct CalendarConfiguration: Sendable {
         showLunarMansion: Bool = true,
         showShichen: Bool = true,
         calendar: Calendar = .current,
-        firstWeekday: Int = 1
+        firstWeekday: Int = 1,
+        showsHeader: Bool = true
     ) {
         self.showLunarDays = showLunarDays
         self.showSolarTerms = showSolarTerms
@@ -58,6 +62,7 @@ public struct CalendarConfiguration: Sendable {
         self.showShichen = showShichen
         self.calendar = calendar
         self.firstWeekday = firstWeekday
+        self.showsHeader = showsHeader
     }
 
     /// A default configuration with all features enabled.
