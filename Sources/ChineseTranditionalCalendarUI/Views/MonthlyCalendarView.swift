@@ -23,37 +23,56 @@ public struct MonthlyCalendarView: View {
     @Environment(\.calendarTheme) private var theme
 
     public var body: some View {
-        GeometryReader { geo in
-            let adapted = adaptedTheme(for: geo.size.width)
+        VStack(spacing: 8) {
+            MonthHeaderView(
+                month: viewModel.currentMonth,
+                onPrevious: viewModel.goToPreviousMonth,
+                onNext: viewModel.goToNextMonth,
+                onToday: viewModel.goToToday
+            )
 
-            VStack(spacing: 8) {
-                MonthHeaderView(
-                    month: viewModel.currentMonth,
-                    onPrevious: viewModel.goToPreviousMonth,
-                    onNext: viewModel.goToNextMonth,
-                    onToday: viewModel.goToToday
-                )
+            WeekdayHeaderView(calendar: viewModel.currentMonth.calendar)
 
-                WeekdayHeaderView(calendar: viewModel.currentMonth.calendar)
-
-                monthGrid(theme: adapted)
-            }
-            .environment(\.calendarTheme, adapted)
-            .background(adapted.backgroundColor)
-            .gesture(swipeGesture)
-            .animation(.easeInOut(duration: 0.2), value: viewModel.currentMonth)
-            .accessibilityElement(children: .contain)
-            .accessibilityLabel("Monthly calendar, \(viewModel.currentMonth.title)")
+            MonthGridView(viewModel: viewModel)
         }
+        .adaptiveCalendarColumns(baseTheme: theme)
+        .background(theme.backgroundColor)
+        .gesture(swipeGesture)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.currentMonth)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Monthly calendar, \(viewModel.currentMonth.title)")
     }
 
-    // MARK: - Month Grid
+    // MARK: - Swipe Gesture
 
-    private func monthGrid(theme: CalendarTheme) -> some View {
+    private var swipeGesture: some Gesture {
+        DragGesture(minimumDistance: 50)
+            .onEnded { value in
+                if value.translation.width < -50 {
+                    viewModel.goToNextMonth()
+                } else if value.translation.width > 50 {
+                    viewModel.goToPreviousMonth()
+                }
+            }
+    }
+}
+
+// MARK: - MonthGridView
+
+/// The 7-column day grid, split out into its own view (rather than a computed
+/// property on `MonthlyCalendarView`) so it reads `calendarTheme` fresh from
+/// its own environment — matching `WeekdayHeaderView` and `DayCellView`. That's
+/// what lets `.adaptiveCalendarColumns` (applied on an ancestor) reach it.
+private struct MonthGridView: View {
+    @Bindable var viewModel: MonthlyCalendarViewModel
+
+    @Environment(\.calendarTheme) private var theme
+
+    var body: some View {
         let gridDates = viewModel.currentMonth.gridDates
         let columns = Array(repeating: GridItem(.flexible(), spacing: theme.columnSpacing), count: 7)
 
-        return LazyVGrid(columns: columns, spacing: theme.rowSpacing) {
+        LazyVGrid(columns: columns, spacing: theme.rowSpacing) {
             ForEach(Array(gridDates.enumerated()), id: \.offset) { _, calDate in
                 if let calDate {
                     Button {
@@ -73,48 +92,6 @@ public struct MonthlyCalendarView: View {
             }
         }
         .padding(.horizontal)
-    }
-
-    // MARK: - Adaptive Theme
-
-    /// Scales column spacing and day-cell fonts with the per-column width
-    /// actually available, so a narrow `.medium` sheet on iPhone and a roomy
-    /// `.large` sheet on iPad don't render with identical spacing/type sizes.
-    private func adaptedTheme(for width: CGFloat) -> CalendarTheme {
-        let perColumn = width / 7
-        var adapted = theme
-        switch perColumn {
-        case ..<40:
-            adapted.columnSpacing = 0
-            adapted.dayNumberFont = .callout
-            adapted.lunarDayFont = .caption2
-        case 40 ..< 60:
-            adapted.columnSpacing = 2
-            adapted.dayNumberFont = .body
-            adapted.lunarDayFont = .caption
-        case 60 ..< 90:
-            adapted.columnSpacing = 4
-            adapted.dayNumberFont = .title3
-            adapted.lunarDayFont = .footnote
-        default:
-            adapted.columnSpacing = 6
-            adapted.dayNumberFont = .title2
-            adapted.lunarDayFont = .subheadline
-        }
-        return adapted
-    }
-
-    // MARK: - Swipe Gesture
-
-    private var swipeGesture: some Gesture {
-        DragGesture(minimumDistance: 50)
-            .onEnded { value in
-                if value.translation.width < -50 {
-                    viewModel.goToNextMonth()
-                } else if value.translation.width > 50 {
-                    viewModel.goToPreviousMonth()
-                }
-            }
     }
 }
 
