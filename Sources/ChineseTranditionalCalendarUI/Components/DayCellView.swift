@@ -10,17 +10,29 @@ public struct DayCellView: View {
     let calendarDate: CalendarDate
     let isSelected: Bool
     let configuration: CalendarConfiguration
+    let today: Date
 
     @Environment(\.calendarTheme) private var theme
 
     public init(
         calendarDate: CalendarDate,
         isSelected: Bool = false,
-        configuration: CalendarConfiguration = .default
+        configuration: CalendarConfiguration = .default,
+        today: Date = Date()
     ) {
         self.calendarDate = calendarDate
         self.isSelected = isSelected
         self.configuration = configuration
+        self.today = today
+    }
+
+    /// Whether this cell is "today", relative to the supplied `today` date rather
+    /// than the system clock. Widgets must pass their timeline entry's date here:
+    /// WidgetKit renders every future entry's view at delivery time, so a
+    /// `Date()`/`isDateInToday` check would freeze "today" to the render date and
+    /// highlight the wrong cell once a future entry is displayed.
+    private var isToday: Bool {
+        Calendar.current.isDate(calendarDate.date, inSameDayAs: today)
     }
 
     public var body: some View {
@@ -66,7 +78,7 @@ public struct DayCellView: View {
     }
 
     private var dayNumberColor: Color {
-        if calendarDate.isToday {
+        if isToday {
             return theme.accentColor
         }
         if calendarDate.isWeekend {
@@ -79,7 +91,7 @@ public struct DayCellView: View {
         if isSelected {
             return AnyShapeStyle(theme.accentColor.opacity(0.15))
         }
-        if calendarDate.isToday {
+        if isToday {
             return AnyShapeStyle(theme.accentColor.opacity(0.08))
         }
         return AnyShapeStyle(.clear)
@@ -93,7 +105,7 @@ public struct DayCellView: View {
         if let jq = calendarDate.jieqi {
             parts.append(jq.chineseName)
         }
-        if calendarDate.isToday {
+        if isToday {
             parts.append("Today")
         }
         return parts.joined(separator: ", ")
