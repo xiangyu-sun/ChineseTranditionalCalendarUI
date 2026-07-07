@@ -71,9 +71,12 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
         let tomorrowStart = chinaCalendar.date(byAdding: .day, value: 1, to: todayStart) ?? todayStart
         let todayTerm = todayStart.jieqi
         let tomorrowTerm = tomorrowStart.jieqi
-        // If today's term differs from tomorrow's, the transition happens during today.
+        // If today's term differs from tomorrow's, the transition happens during
+        // today. The term that *starts* today is the new one — the term in effect
+        // at end of day (i.e. tomorrow's midnight term), not the outgoing term
+        // that was still active at this morning's midnight.
         if todayTerm != tomorrowTerm {
-            return todayTerm
+            return tomorrowTerm
         }
         return nil
     }
