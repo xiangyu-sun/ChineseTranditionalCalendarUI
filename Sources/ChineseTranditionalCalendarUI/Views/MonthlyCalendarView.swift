@@ -83,6 +83,11 @@ private struct MonthGridView: View {
                             isSelected: calDate == viewModel.selectedDate,
                             configuration: viewModel.configuration
                         )
+                        // A `.plain` button only hit-tests opaque content, and an
+                        // unselected cell's background is clear — without this,
+                        // clicks between the day number and lunar day (or anywhere
+                        // else in the cell) do nothing on macOS.
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 } else {

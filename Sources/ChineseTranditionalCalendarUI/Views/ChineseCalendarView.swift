@@ -96,6 +96,7 @@ public struct ChineseCalendarView: View {
                     dayDetailDate = selected
                 } label: {
                     dayPreview(selected)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }

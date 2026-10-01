@@ -41,6 +41,7 @@ public struct YearlyOverviewView: View {
                         onMonthSelected?(month)
                     } label: {
                         miniMonthView(month)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }

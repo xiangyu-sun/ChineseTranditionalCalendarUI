@@ -24,6 +24,7 @@ public struct WeekStripView: View {
                         viewModel.select(calDate)
                     } label: {
                         weekDayCell(calDate)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
