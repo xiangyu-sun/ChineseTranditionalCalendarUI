@@ -199,3 +199,43 @@ struct CalendarMonthTests {
         #expect(a.id != b.id)
     }
 }
+
+@Suite("CalendarDate time zone")
+struct CalendarDateTimeZoneTests {
+
+    private let china = TimeZone(secondsFromGMT: 8 * 3600)!
+    private let losAngeles = TimeZone(identifier: "America/Los_Angeles")!
+
+    private func calendarDate(_ year: Int, _ month: Int, _ day: Int, in timeZone: TimeZone) -> CalendarDate {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        let date = calendar.date(from: DateComponents(year: year, month: month, day: day, hour: 12))!
+        return CalendarDate(date: date, calendar: calendar)
+    }
+
+    @Test("A solar term starts on its own day, not the day before")
+    func solarTermStartDay() {
+        // 清明 2025 begins 15:48 on 4 April, China time.
+        #expect(calendarDate(2025, 4, 3, in: china).jieqi == nil)
+        #expect(calendarDate(2025, 4, 4, in: china).jieqi == .clearAndBright)
+        #expect(calendarDate(2025, 4, 5, in: china).jieqi == nil)
+        #expect(calendarDate(2025, 4, 5, in: china).jieqiPeriod == .clearAndBright)
+    }
+
+    @Test("Solar terms follow the calendar's time zone")
+    func solarTermFollowsTimeZone() {
+        // 立秋 2025 begins 08:51 on 7 August in China = 17:51 on 6 August in California.
+        #expect(calendarDate(2025, 8, 7, in: china).jieqi == .startOfAutumn)
+        #expect(calendarDate(2025, 8, 6, in: losAngeles).jieqi == .startOfAutumn)
+        #expect(calendarDate(2025, 8, 7, in: losAngeles).jieqi == nil)
+    }
+
+    @Test("Lunar month names use 冬月, 臘月 and 閏")
+    func monthNames() {
+        // 2025-01-10 is 臘月十一; 2024-12-10 is 冬月初十; 2023-03-22 is 閏二月初一.
+        #expect(calendarDate(2025, 1, 10, in: china).lunarMonthName == "臘月")
+        #expect(calendarDate(2024, 12, 10, in: china).lunarMonthName == "冬月")
+        #expect(calendarDate(2023, 3, 22, in: china).lunarMonthName == "閏二月")
+        #expect(calendarDate(2023, 3, 22, in: china).chineseYearMonthDate == "癸卯年閏二月初一")
+    }
+}

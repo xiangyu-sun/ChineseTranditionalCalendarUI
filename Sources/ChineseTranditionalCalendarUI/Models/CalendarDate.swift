@@ -15,6 +15,12 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     /// Gregorian calendar components (year, month, day, weekday).
     public let gregorianComponents: DateComponents
 
+    /// The time zone whose calendar day this value represents. Every Chinese
+    /// calendar value (lunar date, solar term, Twelve Gods, pillars) is
+    /// reckoned on this time zone's calendar day, taken from the calendar
+    /// passed to ``init(date:calendar:)``.
+    public let timeZone: TimeZone
+
     // MARK: - Identity
 
     public var id: Date { date }
@@ -30,7 +36,7 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     // MARK: - Chinese Calendar
 
     /// Chinese lunar day (初一 … 三十), nil when conversion fails.
-    public var lunarDay: Day? { date.chineseDay() }
+    public var lunarDay: Day? { date.chineseDay(calendar: chineseCalendar) }
 
     /// Display name of the lunar day ("初一", "十五", etc.).
     public var lunarDayName: String { lunarDay?.name ?? "" }
@@ -38,54 +44,38 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     /// Whether this is the first day of a lunar month (初一).
     public var isFirstOfLunarMonth: Bool { lunarDay == .day1 }
 
-    /// Traditional Chinese name for the lunar month this date falls in (e.g. "正月", "二月").
-    /// Prefixes with "闰" for leap months.
+    /// The lunar month this date falls in, including leap months.
+    public var lunarMonth: LunarMonth? { LunarMonth(components: chineseComponents) }
+
+    /// Traditional Chinese name for the lunar month this date falls in
+    /// (正月 … 十月, 冬月, 臘月), prefixed with 閏 for leap months.
     public var lunarMonthName: String {
-        let comps = chineseComponents
-        guard let month = comps.month, month >= 1, month <= 12 else { return lunarDayName }
-        let names = ["正月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"]
-        let prefix = comps.isLeapMonth == true ? "闰" : ""
-        return prefix + names[month - 1]
+        lunarMonth?.localizedName(in: .zhHant) ?? lunarDayName
     }
 
+    /// The full lunar date (year stem-branch, month and day).
+    public var lunarDate: LunarDate? { LunarDate(date: date, calendar: chineseCalendar) }
+
     /// Full Chinese date string such as "甲辰年三月初一".
-    public var chineseYearMonthDate: String { date.chineseYearMonthDate }
+    public var chineseYearMonthDate: String { lunarDate?.formatted(.yearMonthDay, in: .zhHant) ?? "" }
 
     // MARK: - Solar Term
 
-    /// The solar term (节气) that **starts** on this date, if any.
+    /// The solar term (節氣) that **starts** on this date, if any.
     ///
-    /// Returns non-nil only when this date is the first day of a new solar term period.
-    /// Solar term transitions are defined against China Standard Time regardless of the
-    /// viewer's device timezone, so the (year, month, day) this ``CalendarDate`` represents
-    /// is re-anchored to a China Standard Time midnight rather than derived from `date`
-    /// (which may carry the device's own timezone offset). The boundary is found by
-    /// comparing this day against tomorrow (not yesterday): a change between today and
-    /// yesterday would mean the transition happened yesterday, not today.
+    /// Non-nil only on the first day of a solar term, reckoned on this value's
+    /// calendar day in ``timeZone``: a term that begins at any time during
+    /// that day starts on it. Pass a China Standard Time calendar to
+    /// ``init(date:calendar:)`` to match Chinese almanacs.
     public var jieqi: Jieqi? {
-        var chinaCalendar = Calendar(identifier: .gregorian)
-        chinaCalendar.timeZone = TimeZone(secondsFromGMT: 8 * 3600)!
-        guard let todayStart = chinaCalendar.date(from: DateComponents(year: year, month: month, day: dayOfMonth)) else {
-            return nil
-        }
-        let tomorrowStart = chinaCalendar.date(byAdding: .day, value: 1, to: todayStart) ?? todayStart
-        let todayTerm = todayStart.jieqi
-        let tomorrowTerm = tomorrowStart.jieqi
-        // If today's term differs from tomorrow's, the transition happens during
-        // today. The term that *starts* today is the new one — the term in effect
-        // at end of day (i.e. tomorrow's midnight term), not the outgoing term
-        // that was still active at this morning's midnight.
-        if todayTerm != tomorrowTerm {
-            return tomorrowTerm
-        }
-        return nil
+        date.isJieqiDay(in: timeZone) ? date.jieqi(in: timeZone) : nil
     }
 
     /// The solar term period this date falls within (always non-nil).
     ///
     /// Unlike ``jieqi`` which is only non-nil on the start day,
     /// this returns the current active solar term for any date.
-    public var jieqiPeriod: Jieqi? { date.jieqi }
+    public var jieqiPeriod: Jieqi? { date.jieqi(in: timeZone) }
 
     /// Chinese name of the solar term, or nil.
     public var jieqiName: String? { jieqi?.chineseName }
@@ -93,7 +83,7 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     // MARK: - Twelve Gods
 
     /// The Twelve Day Officer (建除十二神) for this date.
-    public var twelveGod: TwelveGods? { date.twelveGod() }
+    public var twelveGod: TwelveGods? { date.twelveGod(timeZone: timeZone) }
 
     // MARK: - Moon Phase
 
@@ -108,7 +98,7 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     // MARK: - Four Pillars (BaZi)
 
     /// Chinese calendar date components used for BaZi extraction.
-    public var chineseComponents: DateComponents { date.dateComponentsFromChineseCalendar() }
+    public var chineseComponents: DateComponents { date.dateComponentsFromChineseCalendar(chineseCalendar) }
 
     /// Year pillar (年柱).
     public var nianZhu: Ganzhi? { chineseComponents.nian }
@@ -117,7 +107,7 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     public var yueZhu: Ganzhi? { chineseComponents.yueZhu }
 
     /// Day pillar (日柱).
-    public var riZhu: Ganzhi? { date.dateComponentsFromCurrentCalendar.riZhu }
+    public var riZhu: Ganzhi? { gregorianCalendar.dateComponents([.year, .month, .day], from: date).riZhu }
 
     /// Hour pillar (时柱) — reflects current moment; shiZhu changes every two hours.
     public var shiZhu: Ganzhi? { Date.now.dateComponentsFromCurrentCalendar.shiZhu }
@@ -131,13 +121,16 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     // MARK: - Shichen
 
     /// The two-hour period (时辰) at the stored date.
-    public var shichen: Shichen? { date.shichen }
+    public var shichen: Shichen? {
+        let hour = gregorianCalendar.component(.hour, from: date)
+        return Shichen(dizhi: Dizhi(hourOfDay: hour), date: date, timeZone: timeZone)
+    }
 
     // MARK: - Flags
 
-    /// Whether this date is today in the current calendar.
+    /// Whether this date is today, in ``timeZone``.
     public var isToday: Bool {
-        Calendar.current.isDateInToday(date)
+        gregorianCalendar.isDateInToday(date)
     }
 
     /// Whether this date falls on a weekend.
@@ -155,6 +148,21 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
             [.year, .month, .day, .weekday],
             from: stripped
         )
+        self.timeZone = calendar.timeZone
+    }
+
+    // MARK: - Calendars
+
+    private var gregorianCalendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        return calendar
+    }
+
+    private var chineseCalendar: Calendar {
+        var calendar = Calendar(identifier: .chinese)
+        calendar.timeZone = timeZone
+        return calendar
     }
 
     // MARK: - Hashable

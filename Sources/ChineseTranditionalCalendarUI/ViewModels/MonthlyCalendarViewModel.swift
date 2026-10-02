@@ -44,7 +44,7 @@ public final class MonthlyCalendarViewModel {
     public func goToToday() {
         let today = Date.now
         currentMonth = CalendarMonth(containing: today, calendar: Self.makeCalendar(from: configuration))
-        selectedDate = CalendarDate(date: today)
+        selectedDate = CalendarDate(date: today, calendar: Self.makeCalendar(from: configuration))
     }
 
     /// Navigate to a specific month containing the given date. Clears the current selection.

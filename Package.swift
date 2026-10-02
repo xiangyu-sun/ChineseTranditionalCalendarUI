@@ -19,7 +19,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/xiangyu-sun/ChineseAstrologyCalendar.git",
-            branch: "master"
+            from: "4.1.0"
         ),
         .package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
