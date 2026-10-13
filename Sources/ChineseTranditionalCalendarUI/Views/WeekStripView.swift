@@ -85,16 +85,13 @@ public struct WeekStripView: View {
                 .fontWeight(isSelected ? .bold : .regular)
                 .foregroundStyle(dayColor(calDate, isSelected: isSelected))
 
-            if let jieqi = calDate.jieqi, viewModel.configuration.showSolarTerms {
-                Text(jieqi.chineseName)
+            if let label = calDate.dayLabel(
+                configuration: viewModel.configuration,
+                lunarText: calDate.lunarDayName
+            ) {
+                Text(label.text)
                     .font(.caption2)
-                    .foregroundStyle(theme.solarTermColor)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
-            } else if viewModel.configuration.showLunarDays {
-                Text(calDate.lunarDayName)
-                    .font(.caption2)
-                    .foregroundStyle(theme.secondaryTextColor)
+                    .foregroundStyle(labelColor(label))
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
             }
@@ -114,6 +111,14 @@ public struct WeekStripView: View {
         }
         .accessibilityLabel("\(calDate.dayOfMonth), \(calDate.lunarDayName)")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private func labelColor(_ label: DayLabel) -> Color {
+        switch label {
+        case .festival: theme.festivalColor
+        case .solarTerm: theme.solarTermColor
+        case .lunar: theme.secondaryTextColor
+        }
     }
 
     private func dayColor(_ calDate: CalendarDate, isSelected: Bool) -> Color {

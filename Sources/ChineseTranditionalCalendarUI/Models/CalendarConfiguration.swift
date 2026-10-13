@@ -1,4 +1,5 @@
 import SwiftUI
+import ChineseAstrologyCalendar
 
 /// Configuration for the calendar views.
 ///
@@ -28,6 +29,26 @@ public struct CalendarConfiguration: Sendable {
     /// Show Shichen (时辰) in day detail.
     public var showShichen: Bool
 
+    // MARK: - Special days
+
+    /// Sources of named days (festivals, solar terms, user-defined days) to
+    /// label day cells with, in priority order: when several fall on one day,
+    /// the first source's day is shown.
+    ///
+    /// `nil` (the default) labels cells with solar terms only. When set, the
+    /// sources fully replace that, so include a `JieqiSource` to keep solar
+    /// terms; days of kind ``SpecialDayKind/jieqi`` still honour
+    /// ``showSolarTerms``.
+    ///
+    /// Sources are only ever read, never mutated, so sharing them across
+    /// isolation domains is safe even though the protocol isn't `Sendable`.
+    nonisolated(unsafe) public var specialDaySources: [any SpecialDaySource]?
+
+    /// The time zone whose calendar day the ``specialDaySources`` reckon in.
+    /// A cell is looked up at noon of its date in this zone, so a cell always
+    /// shows the named day of its own Gregorian date. `nil` uses ``calendar``'s.
+    public var specialDayTimeZone: TimeZone?
+
     // MARK: - Calendar settings
 
     /// The calendar to use for Gregorian date calculations.
@@ -47,7 +68,9 @@ public struct CalendarConfiguration: Sendable {
         showLunarMansion: Bool = true,
         showShichen: Bool = true,
         calendar: Calendar = .current,
-        firstWeekday: Int = 1
+        firstWeekday: Int = 1,
+        specialDaySources: [any SpecialDaySource]? = nil,
+        specialDayTimeZone: TimeZone? = nil
     ) {
         self.showLunarDays = showLunarDays
         self.showSolarTerms = showSolarTerms
@@ -58,6 +81,8 @@ public struct CalendarConfiguration: Sendable {
         self.showShichen = showShichen
         self.calendar = calendar
         self.firstWeekday = firstWeekday
+        self.specialDaySources = specialDaySources
+        self.specialDayTimeZone = specialDayTimeZone
     }
 
     /// A default configuration with all features enabled.

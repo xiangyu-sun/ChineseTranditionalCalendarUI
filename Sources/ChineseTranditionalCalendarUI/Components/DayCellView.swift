@@ -42,17 +42,11 @@ public struct DayCellView: View {
                 .font(theme.dayNumberFont)
                 .foregroundStyle(dayNumberColor)
 
-            // Lunar day or solar term
-            if let jieqi = calendarDate.jieqi, configuration.showSolarTerms {
-                Text(jieqi.chineseName)
+            // Festival, solar term or lunar day
+            if let label {
+                Text(label.text)
                     .font(theme.lunarDayFont)
-                    .foregroundStyle(theme.solarTermColor)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-            } else if configuration.showLunarDays {
-                Text(lunarDisplayText)
-                    .font(theme.lunarDayFont)
-                    .foregroundStyle(theme.secondaryTextColor)
+                    .foregroundStyle(labelColor(label))
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }
@@ -69,12 +63,16 @@ public struct DayCellView: View {
 
     // MARK: - Private
 
-    /// Text shown below the day number — lunar month name on 初一, else lunar day name.
-    private var lunarDisplayText: String {
-        if calendarDate.isFirstOfLunarMonth {
-            return calendarDate.lunarMonthName
+    private var label: DayLabel? {
+        calendarDate.dayLabel(configuration: configuration)
+    }
+
+    private func labelColor(_ label: DayLabel) -> Color {
+        switch label {
+        case .festival: theme.festivalColor
+        case .solarTerm: theme.solarTermColor
+        case .lunar: theme.secondaryTextColor
         }
-        return calendarDate.lunarDayName
     }
 
     private var dayNumberColor: Color {
@@ -102,8 +100,8 @@ public struct DayCellView: View {
         if let name = calendarDate.lunarDay?.name {
             parts.append(name)
         }
-        if let jq = calendarDate.jieqi {
-            parts.append(jq.chineseName)
+        if let label, label.text != calendarDate.lunarDay?.name {
+            parts.append(label.text)
         }
         if isToday {
             parts.append("Today")

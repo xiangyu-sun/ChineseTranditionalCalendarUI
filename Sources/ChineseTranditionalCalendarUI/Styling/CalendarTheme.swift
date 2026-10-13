@@ -26,6 +26,10 @@ public struct CalendarTheme: Sendable {
     /// Color for solar term badges.
     public var solarTermColor: Color
 
+    /// Color for festivals and other named days from
+    /// ``CalendarConfiguration/specialDaySources``.
+    public var festivalColor: Color
+
     /// Color for auspicious indicators (黄道).
     public var auspiciousColor: Color
 
@@ -63,6 +67,7 @@ public struct CalendarTheme: Sendable {
         backgroundColor: Color = .clear,
         weekendColor: Color = .red.opacity(0.7),
         solarTermColor: Color = .green,
+        festivalColor: Color = .orange,
         auspiciousColor: Color = .yellow,
         inauspiciousColor: Color = .gray,
         dayNumberFont: Font = .body,
@@ -78,6 +83,7 @@ public struct CalendarTheme: Sendable {
         self.backgroundColor = backgroundColor
         self.weekendColor = weekendColor
         self.solarTermColor = solarTermColor
+        self.festivalColor = festivalColor
         self.auspiciousColor = auspiciousColor
         self.inauspiciousColor = inauspiciousColor
         self.dayNumberFont = dayNumberFont
@@ -99,6 +105,7 @@ public struct CalendarTheme: Sendable {
         backgroundColor: .clear,
         weekendColor: .red,
         solarTermColor: .green,
+        festivalColor: .red,
         auspiciousColor: .yellow,
         inauspiciousColor: .gray,
         dayNumberFont: .body.weight(.medium),
