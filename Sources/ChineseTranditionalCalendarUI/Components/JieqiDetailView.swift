@@ -7,6 +7,7 @@ public struct JieqiDetailView: View {
     let jieqi: Jieqi
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     public init(jieqi: Jieqi) {
         self.jieqi = jieqi
@@ -14,19 +15,19 @@ public struct JieqiDetailView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("节气", systemImage: "leaf.circle")
+            Label(language.string("節氣"), systemImage: "leaf.circle")
                 .font(.subheadline)
                 .fontWeight(.semibold)
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text(jieqi.chineseName)
+                    Text(jieqi.localizedName(in: language))
                         .font(.title3)
                         .fontWeight(.bold)
 
                     Spacer()
 
-                    Text(jieqi.season.chineseDescription)
+                    Text(jieqi.season.localizedName(in: language))
                         .font(.caption)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
@@ -34,7 +35,7 @@ public struct JieqiDetailView: View {
                 }
 
                 // 72 Pentads
-                Text(jieqi.qishierHou)
+                Text(language.prose(jieqi.qishierHou))
                     .font(.caption)
                     .foregroundStyle(theme.secondaryTextColor)
 
@@ -44,7 +45,7 @@ public struct JieqiDetailView: View {
                 HStack(alignment: .top, spacing: 4) {
                     Image(systemName: "heart.text.clipboard")
                         .foregroundStyle(theme.accentColor)
-                    Text(jieqi.healthTip)
+                    Text(language.prose(jieqi.healthTip))
                         .font(.caption)
                 }
 
@@ -52,13 +53,13 @@ public struct JieqiDetailView: View {
                 HStack(alignment: .top, spacing: 4) {
                     Image(systemName: "fork.knife.circle")
                         .foregroundStyle(theme.solarTermColor)
-                    Text(jieqi.seasonalFoods)
+                    Text(language.prose(jieqi.seasonalFoods))
                         .font(.caption)
                 }
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(jieqi.chineseName), \(jieqi.healthTip)")
+        .accessibilityLabel("\(jieqi.localizedName(in: language)), \(language.prose(jieqi.healthTip))")
     }
 }
 

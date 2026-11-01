@@ -1,4 +1,5 @@
 import Foundation
+import ChineseAstrologyCalendar
 
 enum CalendarTab: String, CaseIterable, Identifiable {
     case monthly
@@ -7,11 +8,13 @@ enum CalendarTab: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var label: String {
+    var label: String { label(in: .zhHant) }
+
+    func label(in language: DisplayLanguage) -> String {
         switch self {
-        case .monthly: "Month"
-        case .weekly: "Week"
-        case .yearly: "Year"
+        case .monthly: language.string("Month")
+        case .weekly: language.string("Week")
+        case .yearly: language.string("Year")
         }
     }
 }

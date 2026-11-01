@@ -10,6 +10,7 @@ public struct TwelveGodsView: View {
     let calendarDate: CalendarDate
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     public init(calendarDate: CalendarDate) {
         self.calendarDate = calendarDate
@@ -18,17 +19,17 @@ public struct TwelveGodsView: View {
     public var body: some View {
         if let god = calendarDate.twelveGod {
             VStack(alignment: .leading, spacing: 8) {
-                Label("建除十二神", systemImage: "star.circle")
+                Label(language.string("建除十二神"), systemImage: "star.circle")
                     .font(.subheadline)
                     .fontWeight(.semibold)
 
                 HStack(spacing: 12) {
                     // God name
                     VStack(spacing: 4) {
-                        Text(god.chinese)
+                        Text(god.localizedName(in: language))
                             .font(.title2)
                             .fontWeight(.bold)
-                        Text(god.xiongjiL)
+                        Text(language.prose(god.xiongjiL))
                             .font(.caption)
                             .foregroundStyle(auspiciousColor(for: god))
                     }
@@ -36,18 +37,18 @@ public struct TwelveGodsView: View {
 
                     VStack(alignment: .leading, spacing: 6) {
                         // Meaning
-                        Text(god.meaning)
+                        Text(language.prose(god.meaning))
                             .font(.caption)
                             .foregroundStyle(theme.secondaryTextColor)
                             .lineLimit(2)
 
                         // Do
                         HStack(alignment: .top, spacing: 4) {
-                            Text("宜")
+                            Text(language.string("宜"))
                                 .font(.caption)
                                 .fontWeight(.bold)
                                 .foregroundStyle(theme.auspiciousColor)
-                            Text(god.do)
+                            Text(language.prose(god.do))
                                 .font(.caption)
                                 .foregroundStyle(theme.primaryTextColor)
                                 .lineLimit(2)
@@ -55,11 +56,11 @@ public struct TwelveGodsView: View {
 
                         // Don't
                         HStack(alignment: .top, spacing: 4) {
-                            Text("忌")
+                            Text(language.string("忌"))
                                 .font(.caption)
                                 .fontWeight(.bold)
                                 .foregroundStyle(theme.inauspiciousColor)
-                            Text(god.dontDo)
+                            Text(language.prose(god.dontDo))
                                 .font(.caption)
                                 .foregroundStyle(theme.primaryTextColor)
                                 .lineLimit(2)
@@ -68,7 +69,7 @@ public struct TwelveGodsView: View {
                 }
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("\(god.chinese), \(god.xiongjiL), 宜: \(god.do), 忌: \(god.dontDo)")
+            .accessibilityLabel(language.string("%1$@, %2$@, 宜: %3$@, 忌: %4$@", god.localizedName(in: language), language.prose(god.xiongjiL), language.prose(god.do), language.prose(god.dontDo)))
         }
     }
 

@@ -13,6 +13,7 @@ public struct DayCellView: View {
     let today: Date
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     public init(
         calendarDate: CalendarDate,
@@ -64,7 +65,7 @@ public struct DayCellView: View {
     // MARK: - Private
 
     private var label: DayLabel? {
-        calendarDate.dayLabel(configuration: configuration)
+        calendarDate.dayLabel(configuration: configuration, language: language)
     }
 
     private func labelColor(_ label: DayLabel) -> Color {
@@ -97,14 +98,14 @@ public struct DayCellView: View {
 
     private var accessibilityLabel: String {
         var parts = ["\(calendarDate.dayOfMonth)"]
-        if let name = calendarDate.lunarDay?.name {
+        if let name = calendarDate.lunarDay?.localizedName(in: language) {
             parts.append(name)
         }
-        if let label, label.text != calendarDate.lunarDay?.name {
+        if let label, label.text != calendarDate.lunarDay?.localizedName(in: language) {
             parts.append(label.text)
         }
         if isToday {
-            parts.append("Today")
+            parts.append(language.string("Today"))
         }
         return parts.joined(separator: ", ")
     }

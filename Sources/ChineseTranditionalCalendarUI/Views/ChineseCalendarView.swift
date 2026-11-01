@@ -1,4 +1,5 @@
 import SwiftUI
+import ChineseAstrologyCalendar
 
 /// The top-level container that composes all calendar views.
 ///
@@ -15,6 +16,8 @@ public struct ChineseCalendarView: View {
     @State private var yearlyViewModel: YearlyCalendarViewModel
     @State private var selectedTab: CalendarTab = .monthly
     @State private var dayDetailDate: CalendarDate?
+
+    @Environment(\.calendarLanguage) private var language
 
     private let configuration: CalendarConfiguration
 
@@ -47,13 +50,13 @@ public struct ChineseCalendarView: View {
                     calendarDate: selected,
                     configuration: configuration
                 )
-                .navigationTitle(selected.chineseYearMonthDate)
+                .navigationTitle(selected.chineseYearMonthDate(in: language))
                 #if os(iOS) || os(visionOS)
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") {
+                        Button(language.string("Done")) {
                             dayDetailDate = nil
                         }
                     }
@@ -68,9 +71,9 @@ public struct ChineseCalendarView: View {
     // MARK: - Tab Picker
 
     private var tabPicker: some View {
-        Picker("View", selection: $selectedTab) {
+        Picker(language.string("View"), selection: $selectedTab) {
             ForEach(CalendarTab.allCases) { tab in
-                Text(tab.label).tag(tab)
+                Text(tab.label(in: language)).tag(tab)
             }
         }
       #if !os(watchOS)
@@ -78,8 +81,8 @@ public struct ChineseCalendarView: View {
       #endif
         .padding(.horizontal)
         .padding(.vertical, 8)
-        .accessibilityLabel("Calendar view mode")
-        .accessibilityHint("Switch between monthly, weekly, and yearly views")
+        .accessibilityLabel(language.string("Calendar view mode"))
+        .accessibilityHint(language.string("Switch between monthly, weekly, and yearly views"))
     }
 
     // MARK: - Monthly
@@ -121,7 +124,7 @@ public struct ChineseCalendarView: View {
                 )
             } else {
                 Spacer()
-                Text("Select a day")
+                Text(language.string("Select a day"))
                     .foregroundStyle(.secondary)
                 Spacer()
             }
@@ -148,12 +151,12 @@ public struct ChineseCalendarView: View {
     private func dayPreview(_ calDate: CalendarDate) -> some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(calDate.chineseYearMonthDate)
+                Text(calDate.chineseYearMonthDate(in: language))
                     .font(.subheadline)
                     .fontWeight(.medium)
 
                 if let god = calDate.twelveGod, configuration.showTwelveGods {
-                    Text("\(god.chinese) · \(god.xiongjiL)")
+                    Text("\(god.localizedName(in: language)) · \(language.prose(god.xiongjiL))")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -171,8 +174,8 @@ public struct ChineseCalendarView: View {
         .padding()
         .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 12))
         .padding(.horizontal)
-        .accessibilityLabel("View details for \(calDate.chineseYearMonthDate)")
-        .accessibilityHint("Double tap to view full almanac")
+        .accessibilityLabel(language.string("View details for %1$@", calDate.chineseYearMonthDate(in: language)))
+        .accessibilityHint(language.string("Double tap to view full almanac"))
     }
 }
 

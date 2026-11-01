@@ -21,6 +21,7 @@ public struct MonthlyCalendarView: View {
     }
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     public var body: some View {
         VStack(spacing: 8) {
@@ -40,7 +41,7 @@ public struct MonthlyCalendarView: View {
         .gesture(swipeGesture)
         .animation(.easeInOut(duration: 0.2), value: viewModel.currentMonth)
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Monthly calendar, \(viewModel.currentMonth.title)")
+        .accessibilityLabel(language.string("Monthly calendar, %1$@", viewModel.currentMonth.title))
     }
 
     // MARK: - Swipe Gesture

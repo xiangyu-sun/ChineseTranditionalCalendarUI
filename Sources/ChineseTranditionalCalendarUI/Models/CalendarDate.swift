@@ -50,14 +50,14 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     /// Traditional Chinese name for the lunar month this date falls in
     /// (正月 … 十月, 冬月, 臘月), prefixed with 閏 for leap months.
     public var lunarMonthName: String {
-        lunarMonth?.localizedName(in: .zhHant) ?? lunarDayName
+        lunarMonthName(in: .zhHant)
     }
 
     /// The full lunar date (year stem-branch, month and day).
     public var lunarDate: LunarDate? { LunarDate(date: date, calendar: chineseCalendar) }
 
     /// Full Chinese date string such as "甲辰年三月初一".
-    public var chineseYearMonthDate: String { lunarDate?.formatted(.yearMonthDay, in: .zhHant) ?? "" }
+    public var chineseYearMonthDate: String { chineseYearMonthDate(in: .zhHant) }
 
     // MARK: - Solar Term
 
@@ -109,7 +109,7 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
     /// Day pillar (日柱).
     public var riZhu: Ganzhi? { gregorianCalendar.dateComponents([.year, .month, .day], from: date).riZhu }
 
-    /// Hour pillar (时柱) — reflects current moment; shiZhu changes every two hours.
+    /// Hour pillar (時柱) — reflects current moment; shiZhu changes every two hours.
     public var shiZhu: Ganzhi? { Date.now.dateComponentsFromCurrentCalendar.shiZhu }
 
     /// Zodiac animal for the year.
@@ -120,7 +120,7 @@ public struct CalendarDate: Identifiable, Hashable, Sendable {
 
     // MARK: - Shichen
 
-    /// The two-hour period (时辰) at the stored date.
+    /// The two-hour period (時辰) at the stored date.
     public var shichen: Shichen? {
         let hour = gregorianCalendar.component(.hour, from: date)
         return Shichen(dizhi: Dizhi(hourOfDay: hour), date: date, timeZone: timeZone)

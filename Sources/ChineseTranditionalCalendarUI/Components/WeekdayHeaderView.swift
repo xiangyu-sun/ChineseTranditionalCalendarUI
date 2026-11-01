@@ -5,6 +5,7 @@ import SwiftUI
 public struct WeekdayHeaderView: View {
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     private let symbols: [String]
     private let weekendIndices: Set<Int>
@@ -38,7 +39,7 @@ public struct WeekdayHeaderView: View {
         }
         .padding(.horizontal)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Weekday headers")
+        .accessibilityLabel(language.string("Weekday headers"))
     }
 }
 

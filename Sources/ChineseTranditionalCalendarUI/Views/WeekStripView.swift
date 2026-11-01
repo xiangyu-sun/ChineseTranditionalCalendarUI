@@ -9,6 +9,7 @@ public struct WeekStripView: View {
     @Bindable var viewModel: MonthlyCalendarViewModel
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     public init(viewModel: MonthlyCalendarViewModel) {
         self.viewModel = viewModel
@@ -87,7 +88,8 @@ public struct WeekStripView: View {
 
             if let label = calDate.dayLabel(
                 configuration: viewModel.configuration,
-                lunarText: calDate.lunarDayName
+                lunarText: calDate.lunarDayName(in: language),
+                language: language
             ) {
                 Text(label.text)
                     .font(.caption2)
@@ -109,7 +111,7 @@ public struct WeekStripView: View {
                     .strokeBorder(theme.accentColor.opacity(0.5), lineWidth: 1)
             }
         }
-        .accessibilityLabel("\(calDate.dayOfMonth), \(calDate.lunarDayName)")
+        .accessibilityLabel("\(calDate.dayOfMonth), \(calDate.lunarDayName(in: language))")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 

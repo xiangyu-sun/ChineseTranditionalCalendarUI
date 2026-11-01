@@ -111,6 +111,20 @@ let config = CalendarConfiguration(
 MonthlyCalendarViewModel(configuration: config)
 ```
 
+## Localization
+
+Views read `\.calendarLanguage` (default `.zhHant`); UI strings are localized into zh-Hans and en.
+
+```swift
+ChineseCalendarView()
+    .environment(\.calendarLanguage, .zhHans) // or .en
+```
+
+Model text is available per language, e.g. `calendarDate.lunarMonthName(in: .en)` and
+`calendarDate.chineseYearMonthDate(in: .zhHans)`; the existing properties still return Traditional Chinese.
+Long-form almanac prose (Twelve Gods advice, solar-term tips) exists in Traditional Chinese only: it is
+converted for zh-Hans and shown as-is otherwise. Strings live in `Resources/Localizable.xcstrings`.
+
 ## Theming
 
 Apply a `CalendarTheme` through the SwiftUI environment:

@@ -10,6 +10,7 @@ public struct FourPillarsView: View {
     let calendarDate: CalendarDate
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     public init(calendarDate: CalendarDate) {
         self.calendarDate = calendarDate
@@ -17,15 +18,15 @@ public struct FourPillarsView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("四柱八字", systemImage: "square.grid.4x3.fill")
+            Label(language.string("四柱八字"), systemImage: "square.grid.4x3.fill")
                 .font(.subheadline)
                 .fontWeight(.semibold)
 
             HStack(spacing: 12) {
-                pillarColumn(title: "年柱", ganzhi: calendarDate.nianZhu)
-                pillarColumn(title: "月柱", ganzhi: calendarDate.yueZhu)
-                pillarColumn(title: "日柱", ganzhi: calendarDate.riZhu)
-                pillarColumn(title: "时柱", ganzhi: calendarDate.shiZhu)
+                pillarColumn(title: language.string("年柱"), ganzhi: calendarDate.nianZhu)
+                pillarColumn(title: language.string("月柱"), ganzhi: calendarDate.yueZhu)
+                pillarColumn(title: language.string("日柱"), ganzhi: calendarDate.riZhu)
+                pillarColumn(title: language.string("時柱"), ganzhi: calendarDate.shiZhu)
             }
             .frame(maxWidth: .infinity)
         }
@@ -41,7 +42,7 @@ public struct FourPillarsView: View {
                 .foregroundStyle(theme.secondaryTextColor)
 
             if let ganzhi {
-                Text(ganzhi.description)
+                Text(ganzhi.localizedName(in: language))
                     .font(.title3)
                     .fontWeight(.medium)
                     .foregroundStyle(theme.primaryTextColor)
@@ -58,12 +59,12 @@ public struct FourPillarsView: View {
 
     private var accessibilityText: String {
         let pillars = [
-            ("年", calendarDate.nianZhu),
-            ("月", calendarDate.yueZhu),
-            ("日", calendarDate.riZhu),
-            ("时", calendarDate.shiZhu)
+            (language.string("年"), calendarDate.nianZhu),
+            (language.string("月"), calendarDate.yueZhu),
+            (language.string("日"), calendarDate.riZhu),
+            (language.string("時"), calendarDate.shiZhu)
         ]
-        return "四柱: " + pillars.map { "\($0.0)\($0.1?.description ?? "")" }.joined(separator: ", ")
+        return language.string("四柱: ") + pillars.map { "\($0.0)\($0.1?.localizedName(in: language) ?? "")" }.joined(separator: ", ")
     }
 }
 

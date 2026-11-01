@@ -10,6 +10,7 @@ public struct YearlyOverviewView: View {
     var onMonthSelected: ((CalendarMonth) -> Void)?
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
     @ScaledMetric(relativeTo: .caption2) private var miniCellFontSize: CGFloat = 7
 
     public init(
@@ -55,7 +56,7 @@ public struct YearlyOverviewView: View {
 
     private var yearHeader: some View {
         HStack {
-            Button("Previous year", systemImage: "chevron.left", action: viewModel.goToPreviousYear)
+            Button(language.string("Previous year"), systemImage: "chevron.left", action: viewModel.goToPreviousYear)
                 .labelStyle(.iconOnly)
 
             Spacer()
@@ -73,10 +74,10 @@ public struct YearlyOverviewView: View {
 
             Spacer()
 
-            Button("Current year", systemImage: "calendar.circle", action: viewModel.goToCurrentYear)
+            Button(language.string("Current year"), systemImage: "calendar.circle", action: viewModel.goToCurrentYear)
                 .labelStyle(.iconOnly)
 
-            Button("Next year", systemImage: "chevron.right", action: viewModel.goToNextYear)
+            Button(language.string("Next year"), systemImage: "chevron.right", action: viewModel.goToNextYear)
                 .labelStyle(.iconOnly)
         }
         .padding(.horizontal)
@@ -145,8 +146,8 @@ public struct YearlyOverviewView: View {
         guard let date = Calendar.current.date(from: comps) else { return nil }
         let calDate = CalendarDate(date: date)
         var parts: [String] = []
-        if let nian = calDate.nianZhu {
-            parts.append(nian.formatedYear)
+        if let nian = calDate.yearPillarText(in: language) {
+            parts.append(nian)
         }
         let emoji = calDate.zodiacEmoji
         if !emoji.isEmpty {

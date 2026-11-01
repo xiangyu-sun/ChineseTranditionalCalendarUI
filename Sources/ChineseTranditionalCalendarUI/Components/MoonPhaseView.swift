@@ -9,6 +9,7 @@ public struct MoonPhaseView: View {
     let calendarDate: CalendarDate
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     public init(calendarDate: CalendarDate) {
         self.calendarDate = calendarDate
@@ -17,7 +18,7 @@ public struct MoonPhaseView: View {
     public var body: some View {
         if let phase = calendarDate.moonPhase, let lunarDay = calendarDate.lunarDay {
             VStack(alignment: .leading, spacing: 8) {
-                Label("月相", systemImage: "moon.circle")
+                Label(language.string("月相"), systemImage: "moon.circle")
                     .font(.subheadline)
                     .fontWeight(.semibold)
 
@@ -26,23 +27,27 @@ public struct MoonPhaseView: View {
                         .font(.system(size: 40))
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(phase.modernChineseName(lunarDay))
+                        Text(phaseName(phase, lunarDay))
                             .font(.body)
                             .fontWeight(.medium)
                         if phase.acientChineseName(lunarDay) != phase.modernChineseName(lunarDay) {
-                            Text(phase.acientChineseName(lunarDay))
+                            Text(language.prose(phase.acientChineseName(lunarDay)))
                                 .font(.caption)
                                 .foregroundStyle(theme.secondaryTextColor)
                         }
-                        Text(lunarDay.name)
+                        Text(lunarDay.localizedName(in: language))
                             .font(.caption)
                             .foregroundStyle(theme.secondaryTextColor)
                     }
                 }
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("月相: \(phase.modernChineseName(lunarDay)), \(lunarDay.name)")
+            .accessibilityLabel(language.string("月相: %1$@, %2$@", phaseName(phase, lunarDay), lunarDay.localizedName(in: language)))
         }
+    }
+
+    private func phaseName(_ phase: ChineseMoonPhase, _ lunarDay: Day) -> String {
+        language == .zhHant ? phase.modernChineseName(lunarDay) : phase.localizedName(in: language)
     }
 
     private func moonEmoji(for phase: ChineseMoonPhase) -> String {

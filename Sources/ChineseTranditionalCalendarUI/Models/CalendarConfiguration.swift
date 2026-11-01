@@ -26,7 +26,7 @@ public struct CalendarConfiguration: Sendable {
     /// Show Lunar Mansion (二十八宿) in day detail.
     public var showLunarMansion: Bool
 
-    /// Show Shichen (时辰) in day detail.
+    /// Show Shichen (時辰) in day detail.
     public var showShichen: Bool
 
     // MARK: - Special days

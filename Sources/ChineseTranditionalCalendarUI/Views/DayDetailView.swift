@@ -16,6 +16,7 @@ public struct DayDetailView: View {
     let configuration: CalendarConfiguration
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     public init(
         calendarDate: CalendarDate,
@@ -76,20 +77,20 @@ public struct DayDetailView: View {
                 .bold()
 
             // Chinese calendar date
-            Text(calendarDate.chineseYearMonthDate)
+            Text(calendarDate.chineseYearMonthDate(in: language))
                 .font(.headline)
                 .foregroundStyle(theme.secondaryTextColor)
 
             // Zodiac
             if let zodiac = calendarDate.zodiac {
-                Text("\(zodiac.emoji) \(zodiac.rawValue)年")
+                Text(language.string("%1$@ %2$@年", zodiac.emoji, zodiac.localizedName(in: language)))
                     .font(.subheadline)
                     .foregroundStyle(theme.secondaryTextColor)
             }
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Date: \(calendarDate.date.formatted(date: .long, time: .omitted)), \(calendarDate.chineseYearMonthDate)")
+        .accessibilityLabel("\(language.string("Date")): \(calendarDate.date.formatted(date: .long, time: .omitted)), \(calendarDate.chineseYearMonthDate(in: language))")
     }
 
     // MARK: - Shichen Section
@@ -97,16 +98,16 @@ public struct DayDetailView: View {
     @ViewBuilder
     private func shichenSection(_ shichen: Shichen) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("时辰", systemImage: "clock.circle")
+            Label(language.string("時辰"), systemImage: "clock.circle")
                 .font(.subheadline)
                 .fontWeight(.semibold)
 
             HStack(spacing: 12) {
                 VStack(spacing: 4) {
-                    Text(shichen.dizhi.chineseCharacter + "时")
+                    Text(language.string("%1$@時", shichen.dizhi.localizedName(in: language)))
                         .font(.title3)
                         .fontWeight(.bold)
-                    Text(shichen.dizhi.aliasName)
+                    Text(language.prose(shichen.dizhi.aliasName))
                         .font(.caption)
                         .foregroundStyle(theme.secondaryTextColor)
                 }
@@ -116,17 +117,17 @@ public struct DayDetailView: View {
                         Text(hourRange)
                             .font(.caption)
                     }
-                    Text("刻: \(shichen.currentKeSpellOut)")
+                    Text(language.string("刻: %1$@", shichen.localizedKeSpellOut(in: language)))
                         .font(.caption)
                         .foregroundStyle(theme.secondaryTextColor)
-                    Text("经络: \(shichen.dizhi.organReference)")
+                    Text(language.string("經絡: %1$@", language.prose(shichen.dizhi.organReference)))
                         .font(.caption)
                         .foregroundStyle(theme.secondaryTextColor)
                 }
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("时辰: \(shichen.dizhi.chineseCharacter)时, \(shichen.dizhi.aliasName)")
+        .accessibilityLabel(language.string("時辰: %1$@, %2$@", language.string("%1$@時", shichen.dizhi.localizedName(in: language)), language.prose(shichen.dizhi.aliasName)))
     }
 }
 

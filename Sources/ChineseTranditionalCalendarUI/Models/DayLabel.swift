@@ -47,12 +47,16 @@ extension CalendarDate {
     /// Text shown below the day number when no named day applies — the lunar
     /// month name on 初一, else the lunar day name.
     var lunarDisplayText: String {
-        isFirstOfLunarMonth ? lunarMonthName : lunarDayName
+        lunarDisplayText(in: .zhHant)
     }
 
     /// The cell label under `configuration`, by priority: special day (in the
     /// sources' order) > solar term > lunar day. `nil` when nothing is enabled.
-    func dayLabel(configuration: CalendarConfiguration, lunarText: String? = nil) -> DayLabel? {
+    func dayLabel(
+        configuration: CalendarConfiguration,
+        lunarText: String? = nil,
+        language: DisplayLanguage = .zhHant
+    ) -> DayLabel? {
         if let sources = configuration.specialDaySources {
             if let day = specialDay(
                 from: sources,
@@ -62,8 +66,8 @@ extension CalendarDate {
                 return day.kind == .jieqi ? .solarTerm(day.name) : .festival(day.name)
             }
         } else if configuration.showSolarTerms, let jieqi {
-            return .solarTerm(jieqi.chineseName)
+            return .solarTerm(jieqi.localizedName(in: language))
         }
-        return configuration.showLunarDays ? .lunar(lunarText ?? lunarDisplayText) : nil
+        return configuration.showLunarDays ? .lunar(lunarText ?? lunarDisplayText(in: language)) : nil
     }
 }

@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "ChineseTranditionalCalendarUI",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v17),
         .macOS(.v14),
@@ -29,7 +30,8 @@ let package = Package(
     targets: [
         .target(
             name: "ChineseTranditionalCalendarUI",
-            dependencies: ["ChineseAstrologyCalendar"]
+            dependencies: ["ChineseAstrologyCalendar"],
+            resources: [.process("Resources/Localizable.xcstrings")]
         ),
         .testTarget(
             name: "ChineseTranditionalCalendarUITests",

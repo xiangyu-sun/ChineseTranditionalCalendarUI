@@ -9,6 +9,7 @@ public struct MonthHeaderView: View {
     let onToday: () -> Void
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     public init(
         month: CalendarMonth,
@@ -24,7 +25,7 @@ public struct MonthHeaderView: View {
 
     public var body: some View {
         HStack {
-            Button("Previous month", systemImage: "chevron.left", action: onPrevious)
+            Button(language.string("Previous month"), systemImage: "chevron.left", action: onPrevious)
                 .labelStyle(.iconOnly)
                 .imageScale(.large)
 
@@ -45,11 +46,11 @@ public struct MonthHeaderView: View {
 
             Spacer()
 
-            Button("Go to today", systemImage: "calendar.circle", action: onToday)
+            Button(language.string("Go to today"), systemImage: "calendar.circle", action: onToday)
                 .labelStyle(.iconOnly)
                 .imageScale(.large)
 
-            Button("Next month", systemImage: "chevron.right", action: onNext)
+            Button(language.string("Next month"), systemImage: "chevron.right", action: onNext)
                 .labelStyle(.iconOnly)
                 .imageScale(.large)
         }
@@ -59,8 +60,8 @@ public struct MonthHeaderView: View {
 
     private func chineseYearText(for date: CalendarDate) -> String {
         var parts: [String] = []
-        if let nian = date.nianZhu {
-            parts.append(nian.formatedYear)
+        if let nian = date.yearPillarText(in: language) {
+            parts.append(nian)
         }
         let emoji = date.zodiacEmoji
         if !emoji.isEmpty {

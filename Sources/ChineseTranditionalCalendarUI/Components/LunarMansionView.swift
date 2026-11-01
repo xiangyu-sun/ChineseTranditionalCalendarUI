@@ -7,6 +7,7 @@ public struct LunarMansionView: View {
     let calendarDate: CalendarDate
 
     @Environment(\.calendarTheme) private var theme
+    @Environment(\.calendarLanguage) private var language
 
     public init(calendarDate: CalendarDate) {
         self.calendarDate = calendarDate
@@ -16,28 +17,28 @@ public struct LunarMansionView: View {
         let mansion = calendarDate.lunarMansion
 
         VStack(alignment: .leading, spacing: 8) {
-            Label("二十八宿", systemImage: "sparkles")
+            Label(language.string("二十八宿"), systemImage: "sparkles")
                 .font(.subheadline)
                 .fontWeight(.semibold)
 
             HStack(spacing: 12) {
                 VStack(spacing: 4) {
-                    Text(mansion.name)
+                    Text(mansion.localizedName(in: language))
                         .font(.title2)
                         .fontWeight(.bold)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(mansion.fourSymbol.rawValue)
+                    Text(mansion.fourSymbol.localizedName(in: language))
                         .font(.body)
-                    Text(mansion.fangwei.chineseCharacter + "方")
+                    Text(language.string("%1$@方", mansion.fangwei.localizedName(in: language)))
                         .font(.caption)
                         .foregroundStyle(theme.secondaryTextColor)
                 }
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(mansion.name), \(mansion.fourSymbol.rawValue), \(mansion.fangwei.chineseCharacter)方")
+        .accessibilityLabel("\(mansion.localizedName(in: language)), \(mansion.fourSymbol.localizedName(in: language)), \(language.string("%1$@方", mansion.fangwei.localizedName(in: language)))")
     }
 }
 
