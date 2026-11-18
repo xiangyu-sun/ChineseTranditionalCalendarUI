@@ -20,7 +20,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/xiangyu-sun/ChineseAstrologyCalendar.git",
-            from: "4.3.0"
+            from: "4.3.1"
         ),
         .package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
